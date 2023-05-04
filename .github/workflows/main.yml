@@ -25,4 +25,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: chatwoot:latest
+          tags: gcsns/chatwoot:latest
