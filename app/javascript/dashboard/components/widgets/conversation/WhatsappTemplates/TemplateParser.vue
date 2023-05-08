@@ -91,6 +91,7 @@ export default {
       const payload = {
         message: this.processedString,
         templateParams: {
+          ...(this.template.id && { id: this.template.id }),
           name: this.template.name,
           category: this.template.category,
           language: this.template.language,
