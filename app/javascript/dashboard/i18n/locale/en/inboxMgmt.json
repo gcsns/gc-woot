@@ -204,11 +204,23 @@
           "LABEL": "API Provider",
           "TWILIO": "Twilio",
           "WHATSAPP_CLOUD": "WhatsApp Cloud",
-          "360_DIALOG": "360Dialog"
+          "360_DIALOG": "360Dialog",
+          "VALUE_FIRST": "Value First",
+          "AI_SENSY": "AI Sensy"
         },
         "INBOX_NAME": {
           "LABEL": "Inbox Name",
           "PLACEHOLDER": "Please enter an inbox name",
+          "ERROR": "This field is required"
+        },
+        "USERNAME": {
+          "LABEL": "User Name",
+          "PLACEHOLDER": "Please enter your VFirst username",
+          "ERROR": "This field is required"
+        },
+        "PASSWORD": {
+          "LABEL": "Password",
+          "PLACEHOLDER": "Please enter your VFirst password",
           "ERROR": "This field is required"
         },
         "PHONE_NUMBER": {
@@ -240,6 +252,8 @@
         "API_CALLBACK": {
           "TITLE": "Callback URL",
           "SUBTITLE": "You have to configure the webhook URL and the verification token in the Facebook Developer portal with the values shown below.",
+          "SUBTITLE_VFIRST": "You have to configure the webhook URL and the verification token in the ValueFirst Account with the values shown below.",
+          "SUBTITLE_AI_SENSY": "You have to configure the webhook URL and the verification token in the AI Sensy Account with the values shown below.",
           "WEBHOOK_URL": "Webhook URL",
           "WEBHOOK_VERIFICATION_TOKEN": "Webhook Verification Token"
         },
