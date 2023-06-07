@@ -14,8 +14,10 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - uses: nelonoel/branch-name@v1
-      - run: echo ${BRANCH_NAME}
+      # extract branch name
+      - name: Extract branch name
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
         
       - name: Check out the repo
         uses: actions/checkout@v3
