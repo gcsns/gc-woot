@@ -2,6 +2,8 @@ class Whatsapp::Providers::WhatsappAiSensyService < Whatsapp::Providers::BaseSer
   def send_message(phone_number, message)
     if message.attachments.present?
       send_attachment_message(phone_number, message)
+    elsif message.content_type == 'wb_interactive'
+      send_interactive_message(phone_number, message)
     else
       send_text_message(phone_number, message)
     end
@@ -81,6 +83,21 @@ class Whatsapp::Providers::WhatsappAiSensyService < Whatsapp::Providers::BaseSer
         to: phone_number,
         text: { body: message.content },
         type: 'text'
+      }.to_json
+    )
+
+    process_response(response)
+  end
+
+  def send_interactive_message(phone_number, message)
+    response = HTTParty.post(
+      "#{api_base_path_ai_sensy}/messages",
+      headers: api_headers,
+      body: {
+        recipient_type: 'individual',
+        to: phone_number,
+        interactive: message.content_attributes,
+        type: 'interactive'
       }.to_json
     )
 
