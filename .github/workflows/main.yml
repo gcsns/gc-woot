@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: gcsns/chatwoot:latest
+          tags: gcsns/chatwoot:${{ github.ref_slug }}
