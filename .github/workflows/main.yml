@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - develop-pipeline
+      - develop
+      - master
+      - feat-aisensy
 
 jobs:
   push_to_registry:
