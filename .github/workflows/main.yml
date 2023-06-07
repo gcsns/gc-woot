@@ -16,6 +16,8 @@ jobs:
     steps:
       # extract branch name
       - name: Extract branch name
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
         
