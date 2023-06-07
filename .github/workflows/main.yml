@@ -14,12 +14,8 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      # extract branch name
-      - name: Extract branch name
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+      - name: What
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
         
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -35,4 +31,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: gcsns/chatwoot:${BRANCH_NAME}
+          tags: gcsns/chatwoot:${{ env.BRANCH }}
