@@ -540,7 +540,7 @@ export default {
     }
 
     &.is-from-bot {
-      background: var(--v-400);
+      background: #b1b1b1;
       .message-text--metadata .time {
         color: var(--v-50);
       }
