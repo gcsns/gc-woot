@@ -14,6 +14,9 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
+      - name:  Branch
+        run: echo ${{ env.BRANCH }}
+        
       - name: Check out the repo
         uses: actions/checkout@v3
       
@@ -28,4 +31,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: gcsns/chatwoot:${{ github.ref_slug }}
+          tags: gcsns/chatwoot:${{ env.BRANCH }}
