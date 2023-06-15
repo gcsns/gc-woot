@@ -28,7 +28,10 @@ class Integrations::BotProcessorService
 
   def process_content(message)
     content = message_content(message)
-    response = get_response(conversation.contact_inbox.source_id, content) if content.present?
+    if content.present?
+      response = get_response("#{conversation.contact_inbox.source_id}-#{conversation.inbox.channel.phone_number}-#{conversation.display_id}",
+                              content)
+    end
     process_response(message, response) if response.present?
   end
 
