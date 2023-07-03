@@ -49,7 +49,7 @@ class ContactInboxWithContactBuilder
   end
 
   def create_contact
-    account.contacts.create!(
+    creation_result = account.contacts.create!(
       name: contact_attributes[:name] || ::Haikunator.haikunate(1000),
       phone_number: contact_attributes[:phone_number],
       email: contact_attributes[:email],
@@ -57,6 +57,8 @@ class ContactInboxWithContactBuilder
       additional_attributes: contact_attributes[:additional_attributes],
       custom_attributes: contact_attributes[:custom_attributes]
     )
+    create_customer_on_shopkey if contact_attributes[:store_number]
+    creation_result
   end
 
   def find_contact
@@ -82,5 +84,52 @@ class ContactInboxWithContactBuilder
     return if phone_number.blank?
 
     account.contacts.find_by(phone_number: phone_number)
+  end
+
+  def create_customer_on_shopkey
+    store_info = HTTParty.get(
+      "https://uam.shopkey.dev/api/user/phone/+#{contact_attributes[:store_number]}",
+      headers: {
+        'env' => 'LIVE'
+      }
+    )
+    return unless store_info['statusCode'] === 200
+
+    store_info = store_info['data']
+    store_code = store_info['storeUrl'].split('://')
+    store_code = store_code[1].split('.').first
+    data = {
+      custom_attributes: [
+        {
+          attribute_code: 'whatsapp_phone_number',
+          label: contact_attributes[:phone_number],
+          value: contact_attributes[:phone_number]
+        },
+        {
+          attribute_code: 'store_view_id',
+          label: "#{store_info['magentoStoreId']}",
+          value: "#{store_info['magentoStoreId']}"
+        }
+      ],
+      empId: "#{store_info['empId']}",
+      firstname: contact_attributes[:name],
+      lastname: '',
+      magentoServerId: store_info['magentoServerId'],
+      phoneNumber: contact_attributes[:phone_number],
+      storeCode: store_code,
+      store_id: '',
+      store_view_id: store_info['magentoStoreId'],
+      website_id: '0'
+    }
+
+    data['email'] = contact_attributes[:email] if contact_attributes[:email]
+    contact_creation_response = HTTParty.post(
+      'https://customer-onboarding.shopkey.dev/api/customer/save',
+      headers: {
+        'env' => 'LIVE',
+        'Content-Type' => 'application/json'
+      },
+      body: data.to_json
+    )
   end
 end
