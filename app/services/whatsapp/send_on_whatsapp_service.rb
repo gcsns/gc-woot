@@ -15,7 +15,7 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
   end
 
   def send_template_message
-    name, namespace, lang_code, processed_parameters, template_id = processable_channel_message_template
+    name, namespace, lang_code, processed_parameters, template_id, button_parameters = processable_channel_message_template
 
     return if name.blank?
 
@@ -24,11 +24,13 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
                                          namespace: namespace,
                                          lang_code: lang_code,
                                          parameters: processed_parameters,
-                                         id: template_id
+                                         id: template_id,
+                                         button_parameters: button_parameters
                                        })
     message.update!(source_id: message_id) if message_id.present?
   end
 
+  # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity
   def processable_channel_message_template
     if template_params.present?
       return [
@@ -36,7 +38,8 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
         template_params['namespace'],
         template_params['language'],
         template_params['processed_params']&.map { |_, value| { type: 'text', text: value } },
-        template_params['id']
+        template_params['id'],
+        template_params['button_parameters']
       ]
     end
 
@@ -57,6 +60,7 @@ class Whatsapp::SendOnWhatsappService < Base::SendOnChannelService
     end
     [nil, nil, nil, nil, nil]
   end
+  # rubocop:enable Metrics/AbcSize,Metrics/CyclomaticComplexity
 
   def template_match_object(template)
     body_object = validated_body_object(template)

@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Whatsapp::Providers::WhatsappAiSensyService < Whatsapp::Providers::BaseService
   def send_message(phone_number, message)
     if message.attachments.present?
@@ -136,7 +137,7 @@ class Whatsapp::Providers::WhatsappAiSensyService < Whatsapp::Providers::BaseSer
   end
 
   def template_body_parameters(template_info)
-    {
+    template_params = {
       name: template_info[:name],
       language: {
         policy: 'deterministic',
@@ -147,5 +148,10 @@ class Whatsapp::Providers::WhatsappAiSensyService < Whatsapp::Providers::BaseSer
         parameters: template_info[:parameters]
       }]
     }
+    if template_info[:button_parameters].is_a?(Array) && !template_info[:button_parameters].empty?
+      template_params[:components].push(*template_info[:button_parameters])
+    end
+    template_params
   end
 end
+# rubocop:enable Metrics/ClassLength
