@@ -23,7 +23,7 @@ class Integrations::Dialogflow::ProcessorService < Integrations::BotProcessorSer
     session = session_client.session_path project: hook.settings['project_id'], session: session_id
     query_input = { text: { text: message, language_code: 'en-US' } }
     response = session_client.detect_intent session: session, query_input: query_input
-    if response.present? && response.query_result.fulfillment_text == '@#$%^&*()#$@#$'
+    if response.present? && response.query_result.fulfillment_text == 'What was that?'
       response = session_client.detect_intent session: session, query_input: query_input
     end
     response
