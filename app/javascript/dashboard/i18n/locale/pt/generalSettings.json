@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Desconectado do Shopkey 360"
+      "TEXT": "Desconectado do WASP"
     },
     "BUTTON": {
       "REFRESH": "Atualizar"

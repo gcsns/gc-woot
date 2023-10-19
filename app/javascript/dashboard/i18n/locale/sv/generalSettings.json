@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Du kan nu ta emot e-postmeddelanden i din egna domän."
       }
     },
-    "UPDATE_CHATWOOT": "En uppdatering %{latestChatwootVersion} för Shopkey 360 är tillgänglig. Vänligen uppdatera din instans.",
+    "UPDATE_CHATWOOT": "En uppdatering %{latestChatwootVersion} för WASP är tillgänglig. Vänligen uppdatera din instans.",
     "LEARN_MORE": "Learn more"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Disconnected from Shopkey 360"
+      "TEXT": "Disconnected from WASP"
     },
     "BUTTON": {
       "REFRESH": "Refresh"

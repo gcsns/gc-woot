@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Tagad Jūs varat saņemt e-pasta ziņojumus savā pielāgotajā domēnā."
       }
     },
-    "UPDATE_CHATWOOT": "Ir pieejams Shopkey 360 %{latestChatwootVersion} jauninājums. Lūdzu, atjauniniet savu programmatūru.",
+    "UPDATE_CHATWOOT": "Ir pieejams WASP %{latestChatwootVersion} jauninājums. Lūdzu, atjauniniet savu programmatūru.",
     "LEARN_MORE": "Uzzināt vairāk"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Atvienots no Shopkey 360"
+      "TEXT": "Atvienots no WASP"
     },
     "BUTTON": {
       "REFRESH": "Atjaunot"

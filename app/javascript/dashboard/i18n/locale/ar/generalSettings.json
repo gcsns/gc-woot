@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "يمكنك تلقي رسائل البريد الإلكتروني في النطاق المخصص الخاص بك الآن."
       }
     },
-    "UPDATE_CHATWOOT": "يتوفر تحديث %{latestChatwootVersion} لـ Shopkey 360. الرجاء التحديث.",
+    "UPDATE_CHATWOOT": "يتوفر تحديث %{latestChatwootVersion} لـ WASP. الرجاء التحديث.",
     "LEARN_MORE": "اعرف المزيد"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "قطع الاتصال من Shopkey 360"
+      "TEXT": "قطع الاتصال من WASP"
     },
     "BUTTON": {
       "REFRESH": "تحديث"

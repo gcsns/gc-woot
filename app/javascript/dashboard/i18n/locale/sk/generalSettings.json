@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Teraz môžete prijímať e-maily vo vlastnej doméne."
       }
     },
-    "UPDATE_CHATWOOT": "K dispozícii je aktualizácia %{latestChatwootVersion} pre Shopkey 360. Prosím, aktualizujte svoju inštanciu.",
+    "UPDATE_CHATWOOT": "K dispozícii je aktualizácia %{latestChatwootVersion} pre WASP. Prosím, aktualizujte svoju inštanciu.",
     "LEARN_MORE": "Learn more"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Shopkey 360 je odpojený"
+      "TEXT": "WASP je odpojený"
     },
     "BUTTON": {
       "REFRESH": "Obnoviť"

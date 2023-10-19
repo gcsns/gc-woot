@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "اکنون می‌توانید ایمیل‌ها را در دامنه سفارشی خود دریافت کنید."
       }
     },
-    "UPDATE_CHATWOOT": "به روزرسانی%{latestChatwootVersion} برای Shopkey 360 در دسترس است. لطفا نمونه خود را به روز کنید.",
+    "UPDATE_CHATWOOT": "به روزرسانی%{latestChatwootVersion} برای WASP در دسترس است. لطفا نمونه خود را به روز کنید.",
     "LEARN_MORE": "بیشتر بدانید"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "قطع کردن Shopkey 360"
+      "TEXT": "قطع کردن WASP"
     },
     "BUTTON": {
       "REFRESH": "تازه کردن"

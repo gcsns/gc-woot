@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Þú getur fengið tölvupóst á þitt lén núna."
       }
     },
-    "UPDATE_CHATWOOT": "Uppfærsla %{latestChatwootVersion} fyrir Shopkey 360 er fáanleg. Vinsamlegast uppfærðu tilvikið þitt.",
+    "UPDATE_CHATWOOT": "Uppfærsla %{latestChatwootVersion} fyrir WASP er fáanleg. Vinsamlegast uppfærðu tilvikið þitt.",
     "LEARN_MORE": "Læra meira"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Aftengdur Shopkey 360"
+      "TEXT": "Aftengdur WASP"
     },
     "BUTTON": {
       "REFRESH": "Uppfæra"
