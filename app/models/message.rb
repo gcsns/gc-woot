@@ -37,6 +37,7 @@ class Message < ApplicationRecord
   include Liquidable
   NUMBER_OF_PERMITTED_ATTACHMENTS = 15
 
+  after_initialize :decrypt_msg
   before_validation :ensure_content_type
 
   validates :account_id, presence: true
@@ -45,6 +46,9 @@ class Message < ApplicationRecord
   validates_with ContentAttributeValidator
   validates :content_type, presence: true
   validates :content, length: { maximum: 150_000 }
+
+  before_save :encrypt_msg
+  after_save :decrypt_msg
 
   # when you have a temperory id in your frontend and want it echoed back via action cable
   attr_accessor :echo_id
@@ -324,5 +328,40 @@ class Message < ApplicationRecord
     # rubocop:disable Rails/SkipsModelValidations
     conversation.update_columns(last_activity_at: created_at)
     # rubocop:enable Rails/SkipsModelValidations
+  end
+
+  def encrypt_msg
+    key = ENV.fetch('ENCRYPTION_KEY', '')
+    if key
+      cipher = OpenSSL::Cipher.new('aes-256-cbc')
+      cipher.encrypt
+      cipher.key = key
+      iv = cipher.random_iv
+      data = { :message => content }
+
+      encrypted = cipher.update(data.to_json) + cipher.final
+      self.content = Base64.encode64(iv + encrypted)
+    end
+  end
+
+  def decrypt_msg
+    key = ENV.fetch('ENCRYPTION_KEY', '')
+    if key && base64?(content)
+      decipher = OpenSSL::Cipher.new('aes-256-cbc')
+      decipher.decrypt
+      decoded_str = Base64.decode64(content)
+      decipher.key = key
+      decipher.iv = decoded_str[0...16]
+      plain_string = decipher.update(decoded_str[16...]) + decipher.final
+
+      if plain_string
+        plain = JSON.parse(plain_string)
+        self.content = plain['message']
+      end
+    end
+  end
+
+  def base64?(value)
+    value.is_a?(String) && Base64.encode64(Base64.decode64(value)) == value
   end
 end
