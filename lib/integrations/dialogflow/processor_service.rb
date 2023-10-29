@@ -7,6 +7,10 @@ class Integrations::Dialogflow::ProcessorService < Integrations::BotProcessorSer
     # TODO: might needs to change this to a way that we fetch the updated value from event data instead
     # cause the message.updated event could be that that the message was deleted
 
+    if message.try(:attachments).try(:first).try(:file_type) == 'location'
+      return "#{message.attachments.first.coordinates_long},#{message.attachments.first.coordinates_lat}"
+    end
+
     return message.attachments.first.file_url if message.try(:attachments).try(:first).try(:file_url)
 
     return message.content_attributes['submitted_values']&.first&.dig('value') if event_name == 'message.updated'
