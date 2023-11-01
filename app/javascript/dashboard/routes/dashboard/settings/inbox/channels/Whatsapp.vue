@@ -23,6 +23,9 @@
           <option value="ai_sensy">
             {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.AI_SENSY') }}
           </option>
+          <option value="gup_shup">
+            {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.GUP_SHUP') }}
+          </option>
         </select>
       </label>
     </div>
@@ -31,6 +34,7 @@
     <three-sixty-dialog-whatsapp v-else-if="provider === '360dialog'" />
     <value-first-whats-app v-else-if="provider === 'value_first'" />
     <ai-sensy-whats-app v-else-if="provider === 'ai_sensy'" />
+    <gup-shup-whatsapp v-else-if="provider === 'gup_shup'" />
     <cloud-whatsapp v-else />
   </div>
 </template>
@@ -42,6 +46,7 @@ import ThreeSixtyDialogWhatsapp from './360DialogWhatsapp';
 import CloudWhatsapp from './CloudWhatsapp';
 import ValueFirstWhatsApp from './ValueFirstWhatsApp.vue';
 import AiSensyWhatsApp from './AiSensyWhatsApp.vue';
+import GupShupWhatsapp from './GupShupWhatsapp.vue';
 
 export default {
   components: {
@@ -51,6 +56,7 @@ export default {
     CloudWhatsapp,
     ValueFirstWhatsApp,
     AiSensyWhatsApp,
+    GupShupWhatsapp,
   },
   data() {
     return {

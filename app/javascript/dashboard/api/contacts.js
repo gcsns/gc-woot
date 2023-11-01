@@ -75,6 +75,14 @@ class ContactAPI extends ApiClient {
   destroyAvatar(contactId) {
     return axios.delete(`${this.url}/${contactId}/avatar`);
   }
+
+  attachment(file) {
+    return axios.post(`${this.baseUrl()}/automation_rules/attach_file`, file, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
 }
 
 export default new ContactAPI();

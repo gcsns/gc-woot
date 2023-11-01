@@ -25,7 +25,7 @@ class Channel::Whatsapp < ApplicationRecord
   EDITABLE_ATTRS = [:phone_number, :provider, { provider_config: {} }].freeze
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud value_first ai_sensy].freeze
+  PROVIDERS = %w[default whatsapp_cloud value_first ai_sensy gup_shup].freeze
   before_validation :ensure_webhook_verify_token
 
   validates :provider, inclusion: { in: PROVIDERS }
@@ -46,6 +46,8 @@ class Channel::Whatsapp < ApplicationRecord
       Whatsapp::Providers::WhatsappValueFirstService.new(whatsapp_channel: self)
     when 'ai_sensy'
       Whatsapp::Providers::WhatsappAiSensyService.new(whatsapp_channel: self)
+    when 'gup_shup'
+      Whatsapp::Providers::WhatsappGupShupService.new(whatsapp_channel: self)
     else
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
     end
