@@ -122,7 +122,7 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
     process_response(response)
   end
 
-  def send_attachment_message(_phone_number, message)
+  def send_attachment_message(phone_number, message)
     attachment = message.attachments.first
     type = %w[image audio video sticker].include?(attachment.file_type) ? attachment.file_type : 'file'
     message_content = {
@@ -145,7 +145,7 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
         URI.encode_www_form({
                               'message' => message_content,
                               'src.name' => whatsapp_channel.provider_config['app_name'],
-                              'destination' => '918437644269',
+                              'destination' => phone_number,
                               'source' => whatsapp_channel.provider_config['phone_number'],
                               'channel' => 'whatsapp'
                             })
