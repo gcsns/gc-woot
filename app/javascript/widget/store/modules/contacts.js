@@ -101,6 +101,14 @@ export const actions = {
       // Ignore error
     }
   },
+  uploadAttachment: async (_, file) => {
+    try {
+      const { data } = await ContactsAPI.attachment(file);
+      return data.blob_id;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
 };
 
 export const mutations = {

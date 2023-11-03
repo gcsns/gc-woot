@@ -16,6 +16,7 @@
         },
         "PARSER": {
             "VARIABLES_LABEL": "Variables",
+            "ATTACHMENT_LABEL": "Attachment",
             "VARIABLE_PLACEHOLDER": "Enter %{variable} value",
             "GO_BACK_LABEL": "Go Back",
             "SEND_MESSAGE_LABEL": "Send Message",

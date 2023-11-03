@@ -25,7 +25,7 @@ class Api::V1::Accounts::AutomationRulesController < Api::V1::Accounts::BaseCont
       filename: params[:attachment].original_filename,
       content_type: params[:attachment].content_type
     )
-    render json: { blob_key: file_blob.key, blob_id: file_blob.id }
+    render json: { blob_key: file_blob.key, blob_id: file_blob.id, url: url_for(file_blob) }
   end
 
   def show; end

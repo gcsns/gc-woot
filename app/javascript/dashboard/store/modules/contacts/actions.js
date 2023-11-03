@@ -7,6 +7,7 @@ import ContactAPI from '../../../api/contacts';
 import AccountActionsAPI from '../../../api/accountActions';
 import AnalyticsHelper from '../../../helper/AnalyticsHelper';
 import { CONTACTS_EVENTS } from '../../../helper/AnalyticsHelper/events';
+import ContactsAPI from '../../../api/contacts';
 
 const buildContactFormData = contactParams => {
   const formData = new FormData();
@@ -46,6 +47,14 @@ export const raiseContactCreateErrors = error => {
 };
 
 export const actions = {
+  uploadAttachment: async (_, file) => {
+    try {
+      const { data } = await ContactsAPI.attachment(file);
+      return data.url;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
   search: async ({ commit }, { search, page, sortAttr, label }) => {
     commit(types.SET_CONTACT_UI_FLAG, { isFetching: true });
     try {
