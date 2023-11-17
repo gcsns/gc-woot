@@ -21,6 +21,23 @@
               @change="handleFileUpload"
             />
           </label>
+          <label class="multiselect-wrap--small">
+            {{ $t('IMPORT_CONTACTS.FORM.SELECT_LABEL') }}
+            <multiselect
+              v-model="selectedAudience"
+              :options="audienceList"
+              track-by="id"
+              label="title"
+              :multiple="true"
+              :close-on-select="false"
+              :clear-on-select="false"
+              :hide-selected="true"
+              :placeholder="$t('IMPORT_CONTACTS.FORM.SELECT_PLACEHOLDER')"
+              selected-label
+              class="custom-multiselect"
+              @select="$v.selectedAudience.$touch"
+            />
+          </label>
         </div>
         <div class="modal-footer">
           <div class="medium-12 columns">
@@ -62,11 +79,22 @@ export default {
     return {
       show: true,
       file: '',
+      selectedAudience: [],
+    };
+  },
+  validations() {
+    return {
+      selectedAudience: {
+        isEmpty() {
+          return !!this.selectedAudience.length;
+        },
+      },
     };
   },
   computed: {
     ...mapGetters({
       uiFlags: 'contacts/getUIFlags',
+      audienceList: 'labels/getLabels',
     }),
     csvUrl() {
       return '/downloads/import-contacts-sample.csv';
@@ -79,7 +107,16 @@ export default {
     async uploadFile() {
       try {
         if (!this.file) return;
-        await this.$store.dispatch('contacts/import', this.file);
+        const selectedAudiences = this.selectedAudience
+          ? this.selectedAudience.map(audience => ({
+              id: audience.id,
+              title: audience.title,
+            }))
+          : [];
+        await this.$store.dispatch('contacts/import', {
+          file: this.file,
+          audiences: selectedAudiences,
+        });
         this.onClose();
         this.showAlert(this.$t('IMPORT_CONTACTS.SUCCESS_MESSAGE'));
         this.$track(CONTACTS_EVENTS.IMPORT_SUCCESS);

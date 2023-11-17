@@ -136,10 +136,10 @@ export const actions = {
     }
   },
 
-  import: async ({ commit }, file) => {
+  import: async ({ commit }, { file, audiences }) => {
     commit(types.SET_CONTACT_UI_FLAG, { isCreating: true });
     try {
-      await ContactAPI.importContacts(file);
+      await ContactAPI.importContacts(file, audiences);
       commit(types.SET_CONTACT_UI_FLAG, { isCreating: false });
     } catch (error) {
       commit(types.SET_CONTACT_UI_FLAG, { isCreating: false });
