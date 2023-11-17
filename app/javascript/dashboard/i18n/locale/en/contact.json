@@ -68,7 +68,9 @@
     "FORM": {
       "LABEL": "CSV File",
       "SUBMIT": "Import",
-      "CANCEL": "Cancel"
+      "CANCEL": "Cancel",
+      "SELECT_PLACEHOLDER": "Select a customer label",
+      "SELECT_LABEL": "Customer Audience"
     },
     "SUCCESS_MESSAGE": "Contacts saved successfully",
     "ERROR_MESSAGE": "There was an error, please try again"
