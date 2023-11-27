@@ -78,7 +78,11 @@ export default {
           ? this.$t('CAMPAIGN.ONGOING.404')
           : this.$t('CAMPAIGN.ONGOING.INBOXES_NOT_FOUND');
       }
-
+      if (this.isBroadcastType) {
+        return this.inboxes.length
+          ? this.$t('CAMPAIGN.BROADCAST.404')
+          : this.$t('CAMPAIGN.BROADCAST.INBOXES_NOT_FOUND');
+      }
       return this.inboxes.length
         ? this.$t('CAMPAIGN.ONE_OFF.404')
         : this.$t('CAMPAIGN.ONE_OFF.INBOXES_NOT_FOUND');

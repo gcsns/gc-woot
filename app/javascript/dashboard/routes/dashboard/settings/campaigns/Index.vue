@@ -34,6 +34,9 @@ export default {
       if (this.isOngoingType) {
         return this.$t('CAMPAIGN.HEADER_BTN_TXT.ONGOING');
       }
+      if (this.isBroadcastType) {
+        return this.$t('CAMPAIGN.HEADER_BTN_TXT.BROADCAST');
+      }
       return this.$t('CAMPAIGN.HEADER_BTN_TXT.ONE_OFF');
     },
   },
