@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_07_191457) do
+ActiveRecord::Schema.define(version: 2023_11_27_191457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -205,6 +205,8 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.jsonb "audience", default: []
     t.datetime "scheduled_at"
     t.boolean "trigger_only_during_business_hours", default: false
+    t.jsonb "template", default: {}
+    t.jsonb "template_parameters", default: {}
     t.index ["account_id"], name: "index_campaigns_on_account_id"
     t.index ["campaign_status"], name: "index_campaigns_on_campaign_status"
     t.index ["campaign_type"], name: "index_campaigns_on_campaign_type"
@@ -439,7 +441,7 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.bigint "contact_inbox_id"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.string "identifier"
-    t.datetime "last_activity_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity_at", default: -> { "now()" }, null: false
     t.bigint "team_id"
     t.bigint "campaign_id"
     t.datetime "snoozed_until"
