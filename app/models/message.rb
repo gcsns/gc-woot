@@ -64,7 +64,7 @@ class Message < ApplicationRecord
     integrations: 10,
     wb_interactive: 11
   }
-  enum status: { sent: 0, delivered: 1, read: 2, failed: 3 }
+  enum status: { sent: 0, delivered: 1, read: 2, failed: 3, queued: 4 }
   # [:submitted_email, :items, :submitted_values] : Used for bot message types
   # [:email] : Used by conversation_continuity incoming email messages
   # [:in_reply_to] : Used to reply to a particular tweet in threads
@@ -91,6 +91,7 @@ class Message < ApplicationRecord
   belongs_to :account
   belongs_to :inbox
   belongs_to :conversation, touch: true
+  belongs_to :campaign
 
   # FIXME: phase out user and contact after 1.4 since the info is there in sender
   belongs_to :user, required: false
