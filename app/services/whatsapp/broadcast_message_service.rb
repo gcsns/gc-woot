@@ -20,7 +20,7 @@ class Whatsapp::BroadcastMessageService
       Campaign.where(id: campaign.id).update(campaign_status: :completed)
       return
     end
-    send_message_helper
+    send_message_helper(audience_label_ids)
     offset += limit
     Campaign.where(id: campaign.id).update(sent_count: offset)
   end
