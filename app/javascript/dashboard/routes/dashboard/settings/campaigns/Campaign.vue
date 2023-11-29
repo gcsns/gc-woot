@@ -1,7 +1,19 @@
 <template>
   <div class="column content-box">
+    <div v-if="isBroadcastType" class="search-bar">
+      <div class="search-container">
+        <input
+          v-model="searchQuery"
+          placeholder="Search by campaign name"
+          class="search-container"
+        />
+        <button class="search-button" @click="searchCampaigns">
+          <fluent-icon icon="search" />
+        </button>
+      </div>
+    </div>
     <campaigns-table
-      :campaigns="campaigns"
+      :campaigns="displayedCampaigns"
       :show-empty-result="showEmptyResult"
       :is-loading="uiFlags.isFetching"
       :campaign-type="type"
@@ -48,6 +60,9 @@ export default {
       showEditPopup: false,
       selectedCampaign: {},
       showDeleteConfirmationPopup: false,
+      searchQuery: '',
+      filteredCampaigns: [],
+      searchIcon: 'Search',
     };
   },
   computed: {
@@ -58,6 +73,14 @@ export default {
     campaigns() {
       return this.$store.getters['campaigns/getCampaigns'](this.campaignType);
     },
+    displayedCampaigns() {
+      if (this.searchQuery.length > 0) {
+        // Filter campaigns based on partial match in title
+        return this.filteredCampaigns;
+      }
+      // If no search query, return all campaigns
+      return this.campaigns;
+    },
     showEmptyResult() {
       const hasEmptyResults =
         !this.uiFlags.isFetching && this.campaigns.length === 0;
@@ -65,6 +88,12 @@ export default {
     },
   },
   methods: {
+    searchCampaigns() {
+      this.filteredCampaigns = this.campaigns.filter(campaign =>
+        campaign.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    },
+
     openEditPopup(response) {
       const { row: campaign } = response;
       this.selectedCampaign = campaign;
@@ -104,6 +133,40 @@ export default {
   display: flex;
   justify-content: flex-end;
   padding-bottom: var(--space-one);
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  margin-bottom: 15px;
+  padding-left: 40px; /* Adjust this value to leave space for the icon and text */
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-container input {
+  padding-right: 30px; /* Adjust this value to leave space for the icon */
+}
+
+.search-container button {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: right;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.search-button {
+  align-itmes: right;
+  color: grey;
+  margin-top: 5px;
 }
 
 .content-box .page-top-bar::v-deep {

@@ -146,6 +146,76 @@ export default {
           },
         },
       ];
+
+      if (this.isBroadcastType) {
+        return [
+          {
+            field: 'title',
+            key: 'title',
+            title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.TITLE'),
+            fixed: 'left',
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => (
+              <div class="row--title-block">
+                <h6 class="sub-block-title title text-truncate">{row.title}</h6>
+              </div>
+            ),
+          },
+
+          {
+            field: 'type',
+            key: 'type',
+            title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.TYPE'),
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => (
+              <div class="text-truncate">{row.campaign_type}</div>
+            ),
+          },
+          {
+            field: 'campaign_status',
+            key: 'campaign_status',
+            title: this.$t('CAMPAIGN.LIST.TABLE_HEADER.STATUS'),
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => {
+              const labelText =
+                row.campaign_status === 'completed'
+                  ? this.$t('CAMPAIGN.LIST.STATUS.COMPLETED')
+                  : this.$t('CAMPAIGN.LIST.STATUS.ACTIVE');
+              const colorScheme =
+                row.campaign_status === 'completed' ? 'secondary' : 'success';
+              return <Label title={labelText} colorScheme={colorScheme} />;
+            },
+          },
+          {
+            field: 'created_at',
+            key: 'created_at',
+            title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.CREATED_AT'),
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => (
+              <div class="text-truncate">{row.created_at}</div>
+            ),
+          },
+          {
+            field: 'audience',
+            key: 'audience',
+            title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.AUDIENCE'),
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => (
+              <div class="text-truncate">{row.audience}</div>
+            ),
+          },
+          {
+            field: 'submitted_at',
+            key: 'submitted_at',
+            title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.SUBMITTED'),
+            align: this.isRTLView ? 'right' : 'left',
+            renderBodyCell: ({ row }) => (
+              <div class="text-truncate">{row.campaign_type}</div>
+            ),
+          },
+        ];
+      }
+
       if (this.isOngoingType) {
         return [
           ...visibleToAllTable,

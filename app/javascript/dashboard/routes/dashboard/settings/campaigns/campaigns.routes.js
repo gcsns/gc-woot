@@ -1,7 +1,6 @@
 import Index from './Index';
 import SettingsContent from '../Wrapper';
 import { frontendURL } from '../../../../helper/URLHelper';
-import WhatsappCampaign from './whatsapp-compaign/WhatsappCampaign';
 
 export default {
   routes: [
@@ -46,7 +45,7 @@ export default {
       component: SettingsContent,
       props: {
         headerTitle: 'CAMPAIGN.BROADCAST.HEADER',
-        icon: 'sound-source',
+        icon: 'speaker-1',
       },
       children: [
         {
@@ -56,12 +55,6 @@ export default {
           component: { ...Index },
         },
       ],
-    },
-    {
-      path: frontendURL('accounts/:accountId/campaigns/broadcast/:campaignId'),
-      name: 'campaign_single',
-      roles: ['administrator'],
-      component: WhatsappCampaign,
     },
   ],
 };
