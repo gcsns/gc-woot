@@ -135,6 +135,14 @@
             "CLICKED": "Clicked",
             "REPLIED": "Replied",
             "FAILED": "Failed"
+        },
+        "TABLE_HEADER": {
+          "TITLE": "Campaign Name",
+          "TYPE": "type",
+          "STATUS": "Status",
+          "CREATED_AT": "Created At",
+          "SUBMITTED": "Submitted",
+          "AUDIENCE": "Audience"
         }
     }
   }
