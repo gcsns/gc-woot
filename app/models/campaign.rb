@@ -10,6 +10,7 @@
 #  enabled                            :boolean          default(TRUE)
 #  message                            :text             not null
 #  scheduled_at                       :datetime
+#  template                           :jsonb
 #  title                              :string           not null
 #  trigger_only_during_business_hours :boolean          default(FALSE)
 #  trigger_rules                      :jsonb
