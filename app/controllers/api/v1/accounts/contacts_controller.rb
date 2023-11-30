@@ -176,4 +176,33 @@ class Api::V1::Accounts::ContactsController < Api::V1::Accounts::BaseController
   def render_error(error, error_status)
     render json: error, status: error_status
   end
+
+  def verify
+    render json: { error: I18n.t('errors.contacts.import.failed') }, status: :unprocessable_entity and return if params[:import_file].blank?
+
+    parse_csv_and_build_contacts(params[:import_file])
+  end
+
+  def parse_csv_and_build_contacts(import_file)
+    rejected_contacts = []
+    csv = CSV.parse(import_file.download, headers: true)
+    csv.each do |row|
+      current_contact = build_contact(row.to_h.with_indifferent_access, Current.account)
+      unless current_contact.valid?
+        row['errors'] = current_contact.errors.full_messages.join(', ')
+        rejected_contacts << row
+      end
+    end
+    rejected_contacts
+  end
+
+  def build_contact(params, account)
+    contact = find_or_initialize_contact(params, account)
+    contact.name = params[:name] if params[:name].present?
+    contact.additional_attributes ||= {}
+    contact.additional_attributes[:company] = params[:company] if params[:company].present?
+    contact.additional_attributes[:city] = params[:city] if params[:city].present?
+    contact.assign_attributes(custom_attributes: contact.custom_attributes.merge(params.except(:identifier, :email, :name, :phone_number)))
+    contact
+  end
 end
