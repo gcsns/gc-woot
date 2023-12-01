@@ -15,21 +15,21 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  account_id            :integer          not null
-#  conversation_id       :integer          not null
+#  campaign_id           :integer
+#  conversation_id       :integer
 #  inbox_id              :integer          not null
 #  sender_id             :bigint
 #  source_id             :string
 #
 # Indexes
 #
-#  index_messages_on_account_id                         (account_id)
-#  index_messages_on_account_id_and_inbox_id            (account_id,inbox_id)
-#  index_messages_on_additional_attributes_campaign_id  (((additional_attributes -> 'campaign_id'::text))) USING gin
-#  index_messages_on_content                            (content) USING gin
-#  index_messages_on_conversation_id                    (conversation_id)
-#  index_messages_on_inbox_id                           (inbox_id)
-#  index_messages_on_sender_type_and_sender_id          (sender_type,sender_id)
-#  index_messages_on_source_id                          (source_id)
+#  index_messages_on_account_id                 (account_id)
+#  index_messages_on_account_id_and_inbox_id    (account_id,inbox_id)
+#  index_messages_on_content                    (content)
+#  index_messages_on_conversation_id            (conversation_id)
+#  index_messages_on_inbox_id                   (inbox_id)
+#  index_messages_on_sender_type_and_sender_id  (sender_type,sender_id)
+#  index_messages_on_source_id                  (source_id)
 #
 
 class Message < ApplicationRecord
