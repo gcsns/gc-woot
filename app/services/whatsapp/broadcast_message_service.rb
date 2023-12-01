@@ -32,8 +32,7 @@ class Whatsapp::BroadcastMessageService
     contacts.each do |contact|
       next if contact.phone_number.blank?
 
-      # TODO: = need to process message based on template here. need discussion with Param
-      template_to_send = JSON.parse(campaign.message)
+      template_to_send = format_custom_params(campaign.template, contact)
       symbol_keys_hash = template_to_send.transform_keys(&:to_sym)
       send_message(to: contact, content: symbol_keys_hash)
     end
@@ -75,5 +74,23 @@ class Whatsapp::BroadcastMessageService
       contact_inbox_id: contact_inbox.id
     )
     conversation_created.id
+  end
+
+  def format_custom_params(template, contact)
+    pattern = /\${\w+}\$\${\w+}/
+    contains_placeholder = template.parameters.any? { |param| param.match?(pattern) }
+    return template if contains_placeholder
+
+    template.parameters.map! do |param|
+      match = param.match(/\${(\w+)}\$\${(\w+)}/)
+      if match
+        key_name = match[1]
+        fallback_value = match[2]
+        contact[key_name] || fallback_value
+      else
+        param
+      end
+    end
+    template
   end
 end
