@@ -20,6 +20,7 @@
 #  display_id                         :integer          not null
 #  inbox_id                           :bigint           not null
 #  sender_id                          :integer
+#  sent_count                         :integer          default(0)
 #
 # Indexes
 #
@@ -45,7 +46,7 @@ class Campaign < ApplicationRecord
   before_create :parse_audience
   attr_accessor :audience_type
 
-  enum campaign_type: { ongoing: 0, one_off: 1 }
+  enum campaign_type: { ongoing: 0, one_off: 1, broadcast: 2 }
   # TODO : enabled attribute is unneccessary . lets move that to the campaign status with additional statuses like draft, disabled etc.
   enum campaign_status: { active: 0, completed: 1 }
 
@@ -54,11 +55,12 @@ class Campaign < ApplicationRecord
   after_commit :set_display_id, unless: :display_id?
 
   def trigger!
-    return unless one_off?
+    return unless one_off? || broadcast?
     return if completed?
 
     Twilio::OneoffSmsCampaignService.new(campaign: self).perform if inbox.inbox_type == 'Twilio SMS'
     Sms::OneoffSmsCampaignService.new(campaign: self).perform if inbox.inbox_type == 'Sms'
+    Whatsapp::BroadcastMessageService.new(campaign: self).perform if inbox.inbox_type == 'Whatsapp'
   end
 
   private
