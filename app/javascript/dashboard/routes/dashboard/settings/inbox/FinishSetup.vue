@@ -36,6 +36,40 @@
             :script="currentInbox.provider_config.webhook_verify_token"
           />
         </div>
+        <div v-if="isWhatsAppValueFirstInbox" class="medium-6 small-offset-3">
+          <p class="config--label">
+            {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.WEBHOOK_URL') }}
+          </p>
+          <woot-code lang="html" :script="currentInbox.callback_webhook_url" />
+          <p class="config--label">
+            {{
+              $t(
+                'INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.WEBHOOK_VERIFICATION_TOKEN'
+              )
+            }}
+          </p>
+          <woot-code
+            lang="html"
+            :script="currentInbox.provider_config.webhook_verify_token"
+          />
+        </div>
+        <div v-if="isWhatsAppAiSensyInbox" class="medium-6 small-offset-3">
+          <p class="config--label">
+            {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.WEBHOOK_URL') }}
+          </p>
+          <woot-code lang="html" :script="currentInbox.callback_webhook_url" />
+          <p class="config--label">
+            {{
+              $t(
+                'INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.WEBHOOK_VERIFICATION_TOKEN'
+              )
+            }}
+          </p>
+          <woot-code
+            lang="html"
+            :script="currentInbox.provider_config.webhook_verify_token"
+          />
+        </div>
         <div class="w-[50%] max-w-[50%] ml-[25%]">
           <woot-code
             v-if="isALineInbox"
@@ -114,6 +148,18 @@ export default {
         this.currentInbox.provider === 'whatsapp_cloud'
       );
     },
+    isWhatsAppValueFirstInbox() {
+      return (
+        this.currentInbox.channel_type === 'Channel::Whatsapp' &&
+        this.currentInbox.provider === 'value_first'
+      );
+    },
+    isWhatsAppAiSensyInbox() {
+      return (
+        this.currentInbox.channel_type === 'Channel::Whatsapp' &&
+        this.currentInbox.provider === 'ai_sensy'
+      );
+    },
     message() {
       if (this.isATwilioInbox) {
         return `${this.$t('INBOX_MGMT.FINISH.MESSAGE')}. ${this.$t(
@@ -136,6 +182,18 @@ export default {
       if (this.isWhatsAppCloudInbox) {
         return `${this.$t('INBOX_MGMT.FINISH.MESSAGE')}. ${this.$t(
           'INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.SUBTITLE'
+        )}`;
+      }
+
+      if (this.isWhatsAppValueFirstInbox) {
+        return `${this.$t('INBOX_MGMT.FINISH.MESSAGE')}. ${this.$t(
+          'INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.SUBTITLE_VFIRST'
+        )}`;
+      }
+
+      if (this.isWhatsAppAiSensyInbox) {
+        return `${this.$t('INBOX_MGMT.FINISH.MESSAGE')}. ${this.$t(
+          'INBOX_MGMT.ADD.WHATSAPP.API_CALLBACK.SUBTITLE_AI_SENSY'
         )}`;
       }
 

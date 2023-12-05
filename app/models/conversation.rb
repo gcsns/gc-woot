@@ -120,6 +120,7 @@ class Conversation < ApplicationRecord
 
     messaging_window = inbox.api? ? channel.additional_attributes['agent_reply_time_window'].to_i : 24
     last_message_in_messaging_window?(messaging_window)
+    true
   end
 
   def last_incoming_message

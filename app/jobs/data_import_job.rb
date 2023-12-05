@@ -5,11 +5,18 @@ class DataImportJob < ApplicationJob
   queue_as :low
   retry_on ActiveStorage::FileNotFoundError, wait: 1.minute, attempts: 3
 
-  def perform(data_import)
+  def perform(data_import, campaign_id = nil)
+    @campaign_id = campaign_id
     @data_import = data_import
+    @labels = Set.new
     @contact_manager = DataImport::ContactManager.new(@data_import.account)
     process_import_file
     send_import_notification_to_admin
+    
+    return unless @campaign_id
+
+    campaign
+    @campaign.update(audience: @labels.to_a)
   end
 
   private
@@ -26,6 +33,7 @@ class DataImportJob < ApplicationJob
   def parse_csv_and_build_contacts
     contacts = []
     rejected_contacts = []
+    time = Time.now.to_i
     # Ensuring that importing non utf-8 characters will not throw error
     data = @data_import.import_file.download
     utf8_data = data.force_encoding('UTF-8')
@@ -34,9 +42,13 @@ class DataImportJob < ApplicationJob
     clean_data = utf8_data.valid_encoding? ? utf8_data : utf8_data.encode('UTF-16le', invalid: :replace, replace: '').encode('UTF-8')
 
     csv = CSV.parse(clean_data, headers: true)
-
     csv.each do |row|
       current_contact = @contact_manager.build_contact(row.to_h.with_indifferent_access)
+      if params[:campaign_label]
+        cur_label = "#{time}_#{row[:campaign_label]}"
+        @labels.add(cur_label)
+        current_contact.update_labels(cur_label) 
+      end
       if current_contact.valid?
         contacts << current_contact
       else
@@ -85,5 +97,9 @@ class DataImportJob < ApplicationJob
 
   def send_import_notification_to_admin
     AdministratorNotifications::ChannelNotificationsMailer.with(account: @data_import.account).contact_import_complete(@data_import).deliver_later
+  end
+
+  def campaign
+    @campaign ||= Current.account.campaigns.find_by(display_id: @campaign_id)
   end
 end

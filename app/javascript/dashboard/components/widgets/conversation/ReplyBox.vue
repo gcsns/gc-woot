@@ -775,7 +775,8 @@ export default {
         const isOnWhatsApp =
           this.isATwilioWhatsAppChannel ||
           this.isAWhatsAppCloudChannel ||
-          this.is360DialogWhatsAppChannel;
+          this.is360DialogWhatsAppChannel ||
+          this.isGupShupWhatsAppChannel;
         if (isOnWhatsApp && !this.isPrivate) {
           this.sendMessageAsMultipleMessages(this.message);
         } else {

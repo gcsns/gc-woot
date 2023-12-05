@@ -500,6 +500,9 @@ export default {
       if (this.isATwilioWhatsAppChannel) {
         return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO');
       }
+      if (this.isGupShupWhatsAppChannel) {
+        return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO');
+      }
       return '';
     },
     tabs() {

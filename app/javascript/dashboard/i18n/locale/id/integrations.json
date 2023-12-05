@@ -5,7 +5,7 @@
       "SUBSCRIBED_EVENTS": "Acara Berlangganan",
       "FORM": {
         "CANCEL": "Batalkan",
-        "DESC": "Acara Webhook memberi Anda informasi realtime tentang apa yang terjadi di akun Chatwoot Anda. Harap masukkan URL yang valid untuk mengkonfigurasi callback.",
+        "DESC": "Acara Webhook memberi Anda informasi realtime tentang apa yang terjadi di akun Shopkey 360 Anda. Harap masukkan URL yang valid untuk mengkonfigurasi callback.",
         "SUBSCRIPTIONS": {
           "LABEL": "Acara",
           "EVENTS": {

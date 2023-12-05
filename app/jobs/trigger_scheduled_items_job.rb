@@ -8,6 +8,13 @@ class TriggerScheduledItemsJob < ApplicationJob
       Campaigns::TriggerOneoffCampaignJob.perform_later(campaign)
     end
 
+    # trigger whatsapp template messages
+    campaigns = Campaign.joins(:inbox).where(inboxes: { channel_type: 'Channel::Whatsapp' }, campaign_type: :broadcast,
+                                             campaign_status: :active).limit(1)
+    campaigns.each do |campaign|
+      Campaigns::TriggerBroadcastCampaignJob.perform_later(campaign)
+    end
+
     # Job to reopen snoozed conversations
     Conversations::ReopenSnoozedConversationsJob.perform_later
 

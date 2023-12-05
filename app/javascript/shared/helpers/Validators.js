@@ -1,5 +1,5 @@
 export const isPhoneE164 = value => !!value.match(/^\+[1-9]\d{1,14}$/);
-
+export const isPhoneWithoutPlus = value => !!value.match(/^[1-9]\d{1,14}$/);
 export const isPhoneNumberValid = (value, dialCode) => {
   const number = value.replace(dialCode, '');
   return !!number.match(/^[0-9]{1,14}$/);
@@ -13,6 +13,9 @@ export const isPhoneNumberValidWithDialCode = value => {
 };
 
 export const startsWithPlus = value => value.startsWith('+');
+
+export const isPhoneWithoutPlusOrEmpty = value =>
+  isPhoneWithoutPlus(value) || value === '';
 
 export const shouldBeUrl = (value = '') =>
   value ? value.startsWith('http') : true;

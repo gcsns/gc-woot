@@ -29,6 +29,19 @@
         {{ $t('WHATSAPP_TEMPLATES.PARSER.FORM_ERROR_MESSAGE') }}
       </p>
     </div>
+    <div v-if="shouldAskForAttachment">
+      <p class="attachment-label">
+        {{ $t('WHATSAPP_TEMPLATES.PARSER.ATTACHMENT_LABEL') }}
+      </p>
+      <input
+        id="file"
+        ref="file"
+        type="file"
+        :accept="acceptableFiles"
+        required
+        @change="uploadAttachment"
+      />
+    </div>
     <footer>
       <woot-button variant="smooth" @click="$emit('resetTemplate')">
         {{ $t('WHATSAPP_TEMPLATES.PARSER.GO_BACK_LABEL') }}
@@ -41,6 +54,12 @@
 </template>
 
 <script>
+const acceptableFileTypeDict = {
+  IMAGE: 'image/png, image/gif, image/jpeg',
+  VIDEO: 'video/mp4,video/x-m4v,video/*',
+  DOCUMENT:
+    'application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf',
+};
 const allKeysRequired = value => {
   const keys = Object.keys(value);
   return keys.every(key => value[key]);
@@ -60,8 +79,13 @@ export default {
     },
   },
   data() {
+    const headerFormat = this.template.components.find(
+      component => component.type === 'HEADER'
+    ).format;
     return {
       processedParams: {},
+      attachmentData: null,
+      acceptableFiles: acceptableFileTypeDict[headerFormat] || '',
     };
   },
   computed: {
@@ -80,6 +104,12 @@ export default {
         return this.processedParams[variableKey] || `{{${variable}}}`;
       });
     },
+    shouldAskForAttachment() {
+      return (
+        this.template.components.find(component => component.type === 'HEADER')
+          .format !== 'TEXT'
+      );
+    },
   },
   mounted() {
     this.generateVariables();
@@ -91,14 +121,28 @@ export default {
       const payload = {
         message: this.processedString,
         templateParams: {
+          ...(this.template.id && { id: this.template.id }),
           name: this.template.name,
           category: this.template.category,
           language: this.template.language,
           namespace: this.template.namespace,
           processed_params: this.processedParams,
+          ...(this.attachmentData && {
+            attachment_url: this.attachmentData.attachmentUrl,
+          }),
         },
       };
       this.$emit('sendMessage', payload);
+    },
+    async uploadAttachment(event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('attachment', file, file.name);
+      const url = await this.$store.dispatch(
+        'contacts/uploadAttachment',
+        formData
+      );
+      this.attachmentData = { attachmentUrl: url };
     },
     processVariable(str) {
       return str.replace(/{{|}}/g, '');
@@ -124,6 +168,11 @@ export default {
 
 .variables-label {
   @apply text-sm font-semibold mb-2.5;
+}
+.attachment-label {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-one);
 }
 
 .template__variable-item {

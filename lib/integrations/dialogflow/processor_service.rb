@@ -9,6 +9,12 @@ class Integrations::Dialogflow::ProcessorService < Integrations::BotProcessorSer
     # TODO: might needs to change this to a way that we fetch the updated value from event data instead
     # cause the message.updated event could be that that the message was deleted
 
+    if message.try(:attachments).try(:first).try(:file_type) == 'location'
+      return "#{message.attachments.first.coordinates_long},#{message.attachments.first.coordinates_lat}"
+    end
+
+    return message.attachments.first.file_url if message.try(:attachments).try(:first).try(:file_url)
+
     return message.content_attributes['submitted_values']&.first&.dig('value') if event_name == 'message.updated'
 
     message.content
@@ -72,6 +78,10 @@ class Integrations::Dialogflow::ProcessorService < Integrations::BotProcessorSer
     client = ::Google::Cloud::Dialogflow::V2::Sessions::Client.new
     session = "projects/#{hook.settings['project_id']}/agent/sessions/#{session_id}"
     query_input = { text: { text: message, language_code: 'en-US' } }
-    client.detect_intent session: session, query_input: query_input
+    response = client.detect_intent session: session, query_input: query_input
+    if response.present? && response.query_result.fulfillment_text == 'What was that?'
+      response = client.detect_intent session: session, query_input: query_input
+    end
+    response
   end
 end

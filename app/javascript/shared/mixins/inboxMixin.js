@@ -91,6 +91,12 @@ export default {
         this.whatsAppAPIProvider === 'default'
       );
     },
+    isGupShupWhatsAppChannel() {
+      return (
+        this.channelType === INBOX_TYPES.WHATSAPP &&
+        this.whatsAppAPIProvider === 'gup_shup'
+      );
+    },
     chatAdditionalAttributes() {
       const { additional_attributes: additionalAttributes } = this.chat || {};
       return additionalAttributes || {};

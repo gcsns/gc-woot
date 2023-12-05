@@ -17,6 +17,7 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  account_id                :integer          not null
+#  campaign_id           :bigint
 #  conversation_id           :integer          not null
 #  inbox_id                  :integer          not null
 #  sender_id                 :bigint
@@ -34,6 +35,10 @@
 #  index_messages_on_inbox_id                           (inbox_id)
 #  index_messages_on_sender_type_and_sender_id          (sender_type,sender_id)
 #  index_messages_on_source_id                          (source_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (campaign_id => campaigns.id) ON DELETE => cascade
 #
 
 class Message < ApplicationRecord
@@ -89,9 +94,10 @@ class Message < ApplicationRecord
     article: 7,
     incoming_email: 8,
     input_csat: 9,
-    integrations: 10
+    integrations: 10,
+    wb_interactive: 11
   }
-  enum status: { sent: 0, delivered: 1, read: 2, failed: 3 }
+  enum status: { sent: 0, delivered: 1, read: 2, failed: 3, queued: 4 }
   # [:submitted_email, :items, :submitted_values] : Used for bot message types
   # [:email] : Used by conversation_continuity incoming email messages
   # [:in_reply_to] : Used to reply to a particular tweet in threads

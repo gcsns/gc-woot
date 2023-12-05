@@ -80,6 +80,14 @@ class ContactAPI extends ApiClient {
   exportContacts() {
     return axios.get(`${this.url}/export`);
   }
+
+  attachment(file) {
+    return axios.post(`${this.baseUrl()}/automation_rules/attach_file`, file, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
 }
 
 export default new ContactAPI();
