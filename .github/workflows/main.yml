@@ -8,6 +8,7 @@ on:
       - master
       - feat-aisensy
       - feat/shop-3471
+      - feat/v3.3.1
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
