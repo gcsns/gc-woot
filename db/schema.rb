@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_07_191457) do
+ActiveRecord::Schema.define(version: 2023_11_27_191457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -200,14 +200,15 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.jsonb "trigger_rules", default: {}
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "campaign_type", default: 0, null: false
     t.integer "campaign_status", default: 0, null: false
     t.jsonb "audience", default: []
     t.datetime "scheduled_at"
     t.boolean "trigger_only_during_business_hours", default: false
+    t.jsonb "template", default: {}
+    t.integer "sent_count"
+    t.integer "campaign_type", null: false
     t.index ["account_id"], name: "index_campaigns_on_account_id"
     t.index ["campaign_status"], name: "index_campaigns_on_campaign_status"
-    t.index ["campaign_type"], name: "index_campaigns_on_campaign_type"
     t.index ["inbox_id"], name: "index_campaigns_on_inbox_id"
     t.index ["scheduled_at"], name: "index_campaigns_on_scheduled_at"
   end
@@ -408,7 +409,7 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.index ["account_id"], name: "index_contacts_on_account_id"
     t.index ["email", "account_id"], name: "uniq_email_per_account_contact", unique: true
     t.index ["identifier", "account_id"], name: "uniq_identifier_per_account_contact", unique: true
-    t.index ["name", "email", "phone_number", "identifier"], name: "index_contacts_on_name_email_phone_number_identifier", opclass: :gin_trgm_ops, using: :gin
+    t.index ["name", "email", "phone_number", "identifier"], name: "index_contacts_on_name_email_phone_number_identifier"
     t.index ["phone_number", "account_id"], name: "index_contacts_on_phone_number_and_account_id"
   end
 
@@ -439,7 +440,7 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.bigint "contact_inbox_id"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.string "identifier"
-    t.datetime "last_activity_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity_at", default: -> { "now()" }, null: false
     t.bigint "team_id"
     t.bigint "campaign_id"
     t.datetime "snoozed_until"
@@ -644,7 +645,7 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.text "content"
     t.integer "account_id", null: false
     t.integer "inbox_id", null: false
-    t.integer "conversation_id", null: false
+    t.integer "conversation_id"
     t.integer "message_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -657,10 +658,10 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
     t.bigint "sender_id"
     t.jsonb "external_source_ids", default: {}
     t.jsonb "additional_attributes", default: {}
-    t.index "((additional_attributes -> 'campaign_id'::text))", name: "index_messages_on_additional_attributes_campaign_id", using: :gin
+    t.bigint "campaign_id"
     t.index ["account_id", "inbox_id"], name: "index_messages_on_account_id_and_inbox_id"
     t.index ["account_id"], name: "index_messages_on_account_id"
-    t.index ["content"], name: "index_messages_on_content", opclass: :gin_trgm_ops, using: :gin
+    t.index ["content"], name: "index_messages_on_content"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
     t.index ["inbox_id"], name: "index_messages_on_inbox_id"
     t.index ["sender_type", "sender_id"], name: "index_messages_on_sender_type_and_sender_id"
@@ -819,7 +820,6 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
   create_table "tags", id: :serial, force: :cascade do |t|
     t.string "name"
     t.integer "taggings_count", default: 0
-    t.index "lower((name)::text) gin_trgm_ops", name: "tags_name_trgm_idx", using: :gin
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
@@ -915,6 +915,7 @@ ActiveRecord::Schema.define(version: 2023_04_07_191457) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "messages", "campaigns", on_delete: :cascade
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

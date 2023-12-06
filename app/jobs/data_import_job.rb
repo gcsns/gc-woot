@@ -4,10 +4,16 @@
 class DataImportJob < ApplicationJob
   queue_as :low
 
-  def perform(data_import)
+  def perform(data_import, campaign_id = nil)
+    @campaign_id = campaign_id
     @data_import = data_import
+    @labels = Set.new
     process_import_file
     send_failed_records_to_admin
+    return unless @campaign_id
+
+    campaign
+    @campaign.update(audience: @labels.to_a)
   end
 
   private
@@ -26,9 +32,9 @@ class DataImportJob < ApplicationJob
     contacts = []
     rejected_contacts = []
     csv = CSV.parse(@data_import.import_file.download, headers: true)
-
+    time = Time.now.to_i
     csv.each do |row|
-      current_contact = build_contact(row.to_h.with_indifferent_access, @data_import.account)
+      current_contact = build_contact(row.to_h.with_indifferent_access, @data_import.account, time)
       if current_contact.valid?
         contacts << current_contact
       else
@@ -49,12 +55,14 @@ class DataImportJob < ApplicationJob
     @data_import.update!(status: :completed, processed_records: processed_records, total_records: processed_records + rejected_records)
   end
 
-  def build_contact(params, account)
+  def build_contact(params, account, time)
     contact = find_or_initialize_contact(params, account)
     contact.name = params[:name] if params[:name].present?
     contact.additional_attributes ||= {}
     contact.additional_attributes[:company] = params[:company] if params[:company].present?
     contact.additional_attributes[:city] = params[:city] if params[:city].present?
+    contact.update_labels("#{time}_#{params[:campaign_label]}") if params[:campaign_label]
+    @labels.add("#{time}_#{params[:campaign_label]}")
     contact.assign_attributes(custom_attributes: contact.custom_attributes.merge(params.except(:identifier, :email, :name, :phone_number)))
     contact
   end
@@ -123,5 +131,9 @@ class DataImportJob < ApplicationJob
 
   def send_failed_records_to_admin
     AdministratorNotifications::ChannelNotificationsMailer.with(account: @data_import.account).failed_records(@data_import).deliver_later
+  end
+
+  def campaign
+    @campaign ||= Current.account.campaigns.find_by(display_id: @campaign_id)
   end
 end

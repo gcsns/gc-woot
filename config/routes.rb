@@ -106,6 +106,12 @@ Rails.application.routes.draw do
             end
           end
 
+          resources :bulk_contact do
+            collection do
+              post :verify
+            end
+          end
+
           resources :contacts, only: [:index, :show, :update, :create, :destroy] do
             collection do
               get :active

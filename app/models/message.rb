@@ -15,21 +15,25 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  account_id            :integer          not null
-#  conversation_id       :integer          not null
+#  campaign_id           :bigint
+#  conversation_id       :integer
 #  inbox_id              :integer          not null
 #  sender_id             :bigint
 #  source_id             :string
 #
 # Indexes
 #
-#  index_messages_on_account_id                         (account_id)
-#  index_messages_on_account_id_and_inbox_id            (account_id,inbox_id)
-#  index_messages_on_additional_attributes_campaign_id  (((additional_attributes -> 'campaign_id'::text))) USING gin
-#  index_messages_on_content                            (content) USING gin
-#  index_messages_on_conversation_id                    (conversation_id)
-#  index_messages_on_inbox_id                           (inbox_id)
-#  index_messages_on_sender_type_and_sender_id          (sender_type,sender_id)
-#  index_messages_on_source_id                          (source_id)
+#  index_messages_on_account_id                 (account_id)
+#  index_messages_on_account_id_and_inbox_id    (account_id,inbox_id)
+#  index_messages_on_content                    (content)
+#  index_messages_on_conversation_id            (conversation_id)
+#  index_messages_on_inbox_id                   (inbox_id)
+#  index_messages_on_sender_type_and_sender_id  (sender_type,sender_id)
+#  index_messages_on_source_id                  (source_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (campaign_id => campaigns.id) ON DELETE => cascade
 #
 
 class Message < ApplicationRecord
@@ -64,7 +68,7 @@ class Message < ApplicationRecord
     integrations: 10,
     wb_interactive: 11
   }
-  enum status: { sent: 0, delivered: 1, read: 2, failed: 3 }
+  enum status: { sent: 0, delivered: 1, read: 2, failed: 3, queued: 4 }
   # [:submitted_email, :items, :submitted_values] : Used for bot message types
   # [:email] : Used by conversation_continuity incoming email messages
   # [:in_reply_to] : Used to reply to a particular tweet in threads
