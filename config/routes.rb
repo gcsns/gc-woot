@@ -209,7 +209,11 @@ Rails.application.routes.draw do
       end
       # end of account scoped api routes
       # ----------------------------------
-
+      resources :campaigns, only: [:show] do
+        member do
+          get :messages, only: [:index]
+        end
+      end
       namespace :integrations do
         resources :webhooks, only: [:create]
       end
