@@ -26,9 +26,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: copy dockerfile
+        run: cp docker/Dockerfile .
+
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: docker
+          context: . 
           push: true
           tags: gcsns/chatwoot:${{ env.BRANCH }}
