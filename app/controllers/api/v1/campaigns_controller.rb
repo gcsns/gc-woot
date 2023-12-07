@@ -12,10 +12,18 @@ class Api::V1::CampaignsController < ApplicationController
     limit = params[:limit]
     offset = params[:offset]
     status = params[:status]
+
     campaign = Campaign.find(campaign_id)
+
+    raise ActiveRecord::RecordNotFound, 'Campaign not found' unless campaign
+
     messages = fetch_messages(campaign_id, limit, offset, status)
     formatted_messages = get_formatted_messages(messages, campaign)
     render json: formatted_messages
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: e.message }, status: :not_found
+  rescue StandardError => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 
   private
