@@ -144,6 +144,62 @@
           "SUBMITTED": "Submitted",
           "AUDIENCE": "Audience"
         }
+    },
+    "ADD_BROADCAST": {
+        "TITLE": "Create a campaign",
+        "DESC": "With Whatsapp Campaigns, you can send messages to your customers in bulk. use these campaigns to promote your products, services or updates",
+        "PREV_BUTTON_TEXT": "Prev",
+        "SEND_BUTTON_TEXT": "Send",
+        "NEXT_BUTTON_TEXT": "Next",
+        "FORM": {
+          "TITLE": {
+            "LABEL": "Campaign Name",
+            "PLACEHOLDER": "Please enter the title of campaign",
+            "ERROR": "Title is required"
+          },
+          "SCHEDULED_AT": {
+            "LABEL": "Scheduled time",
+            "PLACEHOLDER": "Please select the time",
+            "CONFIRM": "Confirm",
+            "ERROR": "Scheduled time is required"
+          },
+          "AUDIENCE": {
+            "LABEL": "Audience",
+            "PLACEHOLDER": "Select the customer labels",
+            "ERROR": "Audience is required",
+            "AUDIENCE_TYPE": "Audience Type",
+            "CONTACT": "Contact"
+          },
+          "INBOX": {
+            "LABEL": "Select Inbox",
+            "PLACEHOLDER": "Select Inbox",
+            "ERROR": "Inbox is required"
+          },
+          "MEDIA": {
+            "LABEL": "Media",
+            "PLACEHOLDER": "Image url eg. http//example.com"
+          },
+          "MESSAGE": {
+            "LABEL": "Message Type",
+            "MESSAGE_TYPE_1": "Pre-approved template message",
+            "MESSAGE_TYPE_2": "Regular Message"
+          },
+          "TEMPLATE": {
+            "LABEL": "Template Name",
+            "PLACEHOLDER": "Select a Template",
+            "ERROR": "Template name is required"
+          }
+          ,
+          "ENABLED": "Enable campaign",
+          "TRIGGER_ONLY_BUSINESS_HOURS": "Trigger only during business hours",
+          "SUBMIT": "Add Campaign"
+        },
+        "API": {
+          "SUCCESS_MESSAGE": "Campaign created successfully",
+          "ERROR_MESSAGE": "There was an error. Please try again."
+        }
+      
     }
   }
 }
+
