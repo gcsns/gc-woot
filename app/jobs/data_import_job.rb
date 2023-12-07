@@ -4,16 +4,15 @@
 class DataImportJob < ApplicationJob
   queue_as :low
 
-  def perform(data_import, campaign_id = nil)
-    @campaign_id = campaign_id
+  def perform(data_import)
     @data_import = data_import
     @labels = Set.new
     process_import_file
     send_failed_records_to_admin
-    return unless @campaign_id
+    return unless @data_import.campaign_id
 
-    campaign
-    @campaign.update(audience: @labels.to_a)
+    campaign = Campaign.find_by(id: @data_import.campaign_id)
+    campaign.update(audience: @labels.to_a)
   end
 
   private
@@ -131,9 +130,5 @@ class DataImportJob < ApplicationJob
 
   def send_failed_records_to_admin
     AdministratorNotifications::ChannelNotificationsMailer.with(account: @data_import.account).failed_records(@data_import).deliver_later
-  end
-
-  def campaign
-    @campaign ||= Current.account.campaigns.find_by(display_id: @campaign_id)
   end
 end
