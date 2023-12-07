@@ -20,7 +20,6 @@
 #  display_id                         :integer          not null
 #  inbox_id                           :bigint           not null
 #  sender_id                          :integer
-#  sent_count                         :integer          default(0)
 #
 # Indexes
 #

@@ -17,7 +17,7 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  account_id                :integer          not null
-#  campaign_id           :bigint
+#  campaign_id               :bigint
 #  conversation_id           :integer          not null
 #  inbox_id                  :integer          not null
 #  sender_id                 :bigint
