@@ -29,20 +29,24 @@
             <div v-if="hasParameters" class="vertical-input-container">
               <label for="parameters" class="input-label">Parameters</label>
               <div v-for="index in n" :key="index" class="vertical-input">
-                {{ index }}
+              <div class="parameter-container">
+               <span>{{ index }}</span>
+                
                 <select
                   v-model="selectedParameters[index]"
                   class="consistent-size"
                   @change="onSelectChange(index)"
                 >
                   <option
-                    :value="options.id"
-                    v-for="options in parameterOptions"
-                    :key="options.id"
+                    :value="option.keyName"
+                    v-for="option in customerKeys"
+                    :key="option.keyName"
                   >
-                    {{ options.name }}
+                    {{option.DisplayName}}
                   </option>
                 </select>
+              </div>
+             
               </div>
             </div>
 
@@ -89,7 +93,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 const acceptableFileTypeDict = {
   IMAGE: 'image/png, image/gif, image/jpeg',
   VIDEO: 'video/mp4,video/x-m4v,video/*',
@@ -119,7 +122,9 @@ export default {
 
   mixins: [alertMixin, campaignMixin],
   data() {
-    const headerFormats = this.headerFormat;
+ 
+  
+  
     return {
       title: '',
       message: '',
@@ -146,6 +151,8 @@ export default {
       addBroadcastData: null,
       parameterOptions: [],
       selectedParameters: Array(this.n).fill(null),
+      acceptableFiles: null,
+     
     };
   },
 
@@ -206,6 +213,7 @@ export default {
       uiFlags: 'campaigns/getUIFlags',
       audienceList: 'labels/getLabels',
       inboxes: 'inboxes/getInboxes',
+      customerKeys: 'contacts/getCustomerKeys'
     }),
     parameterArray() {
       return this.selectedParameters.map((selectedParameter, index) => {
@@ -237,6 +245,7 @@ export default {
       type: this.campaignType,
     });
     this.callApiWithCurl();
+    this.fetchOptionsFromApi();
   },
   methods: {
     async onTemplateNameChange() {
@@ -260,6 +269,8 @@ export default {
         selectedTemplate.components.find(
           component => component.type === 'HEADER'
         )?.format || '';
+
+        this.acceptableFiles = acceptableFileTypeDict[this.headerFormat]
 
       const quickReplyButtons =
         selectedTemplate.components.find(
@@ -291,21 +302,14 @@ export default {
         }
       }
     },
-    acceptableFiles() {
-      return acceptableFileTypeDict[this.headerFormat];
-    },
+    
     async fetchOptionsFromApi(index) {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/v1/accounts/2/customer_keys`
-        );
-        const options = response.data.data.map(item => ({
-          id: item.keyName,
-          name: item.DisplayName,
-        }));
-        return options;
+    try {
+        await this.$store.dispatch('contacts/fetchCustomerKeys');
       } catch (error) {
-        return [];
+        const errorMessage =
+          error?.response?.message || this.$t('CAMPAIGN.ADD.API.ERROR_MESSAGE');
+        this.showAlert(errorMessage);
       }
     },
     onSelectChange(index) {
@@ -352,29 +356,14 @@ export default {
     },
     async callApiWithCurl() {
       const inboxWithWhatsappChannel = this.inboxes.find(
-        inbox => inbox.channel_type === 'Channel::Whatsapp'
+        inbox => inbox.id === this.selectedInboxId
       );
 
       this.templateOptions = inboxWithWhatsappChannel.message_templates;
     },
     getCampaignDetails() {
       let campaignDetails = null;
-      if (this.isOngoingType) {
-        campaignDetails = {
-          title: this.title,
-          message: this.message,
-          inbox_id: this.selectedInbox,
-          sender_id: this.selectedSender || null,
-          enabled: this.enabled,
-          trigger_only_during_business_hours:
-            // eslint-disable-next-line prettier/prettier
-            this.triggerOnlyDuringBusinessHours,
-          trigger_rules: {
-            url: this.endPoint,
-            time_on_page: this.timeOnPage,
-          },
-        };
-      } else {
+      
         const audience = this.selectedAudience.map(item => {
           return {
             id: item.id,
@@ -388,7 +377,7 @@ export default {
           scheduled_at: this.scheduledAt,
           audience,
         };
-      }
+      
       return campaignDetails;
     },
     async addCampaign() {
@@ -408,7 +397,7 @@ export default {
         const campaignDetails = {
           title: this.campaignName,
           message: 'Hello',
-          template: selectedTemplate,
+          template: {template: selectedTemplate},
           audience_type: this.audienceType,
           audience: audienceInfo,
           parameters: this.parameterArray.slice(1),
@@ -439,12 +428,20 @@ export default {
   height: 8rem;
 }
 
-.vertical-input-container {
+
+.parameter-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
+
+  
 }
 
 .vertical-input {
+display: flex;
+flex-direction: column;
+
   margin-bottom: 10px; /* Adjust the margin as needed */
 }
 

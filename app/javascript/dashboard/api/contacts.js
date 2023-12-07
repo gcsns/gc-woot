@@ -83,6 +83,10 @@ class ContactAPI extends ApiClient {
       },
     });
   }
+
+  fetchCustomerKeys() {
+    return axios.get(`${this.baseUrl()}/customer_keys`);
+  }
 }
 
 export default new ContactAPI();

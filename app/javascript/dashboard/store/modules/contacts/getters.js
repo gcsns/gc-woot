@@ -15,4 +15,7 @@ export const getters = {
   getAppliedContactFilters: _state => {
     return _state.appliedFilters;
   },
+  getCustomerKeys($state){
+    return $state.customer_keys;
+  }
 };

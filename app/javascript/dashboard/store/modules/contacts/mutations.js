@@ -20,6 +20,11 @@ export const mutations = {
     Vue.set($state.meta, 'currentPage', currentPage);
   },
 
+  [types.SET_CUSTOMER_KEYS]: ($state, payload) => {
+    const { data } = payload;
+    Vue.set($state, 'customer_keys', data);
+  },
+
   [types.SET_CONTACTS]: ($state, data) => {
     const sortOrder = data.map(contact => {
       Vue.set($state.records, contact.id, {

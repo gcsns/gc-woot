@@ -281,6 +281,7 @@ export default {
     });
     this.messageType = 'regular';
     this.fetchContacts();
+    this.filteredInboxes;
   },
   methods: {
     onSelectOption() {
