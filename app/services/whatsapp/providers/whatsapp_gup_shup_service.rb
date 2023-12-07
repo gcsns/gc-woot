@@ -155,8 +155,9 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
   end
 
   def process_response(response)
+    response_body = JSON.parse(response.body)
     if response.success?
-      response['messageId']
+      response_body['messageId']
     else
       Rails.logger.error response.body
       nil
@@ -175,6 +176,8 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
   end
 
   def convert_to_chatwoot_template(gup_shup_template)
+    return unless gup_shup_template['containerMeta']
+
     meta_container = JSON.parse(gup_shup_template['containerMeta'])
 
     chatwoot_template = {

@@ -3,7 +3,7 @@ class Api::V1::Accounts::CampaignsController < Api::V1::Accounts::BaseController
   before_action :check_authorization
 
   def index
-    @campaigns = Current.account.campaigns
+    @campaigns = Current.account.campaigns.where(index_params)
   end
 
   def create
@@ -30,5 +30,9 @@ class Api::V1::Accounts::CampaignsController < Api::V1::Accounts::BaseController
   def campaign_params
     params.require(:campaign).permit(:title, :description, :message, :enabled, :trigger_only_during_business_hours, :inbox_id, :sender_id,
                                      :scheduled_at, audience: [], trigger_rules: {}, template: {}).merge(audience_type: params[:audience_type])
+  end
+
+  def index_params
+    params.permit(:campaign_type, :campaign_status)
   end
 end

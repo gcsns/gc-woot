@@ -4,14 +4,22 @@
 #
 #  id                                 :bigint           not null, primary key
 #  audience                           :jsonb
+#  audience_count                     :integer          default(0)
 #  campaign_status                    :integer          default("active"), not null
 #  campaign_type                      :integer          default("ongoing"), not null
+#  delivered_count                    :integer          default(0)
 #  description                        :text
 #  enabled                            :boolean          default(TRUE)
+#  enqueued_count                     :integer          default(0)
+#  failed_count                       :integer          default(0)
 #  message                            :text             not null
+#  read_count                         :integer          default(0)
+#  replied_count                      :integer          default(0)
 #  scheduled_at                       :datetime
+#  sent_count                         :integer          default(0)
 #  template                           :jsonb
 #  title                              :string           not null
+#  total_cost                         :integer          default(0)
 #  trigger_only_during_business_hours :boolean          default(FALSE)
 #  trigger_rules                      :jsonb
 #  created_at                         :datetime         not null
@@ -20,7 +28,6 @@
 #  display_id                         :integer          not null
 #  inbox_id                           :bigint           not null
 #  sender_id                          :integer
-#  sent_count                         :integer          default(0)
 #
 # Indexes
 #
@@ -43,7 +50,8 @@ class Campaign < ApplicationRecord
   belongs_to :inbox
   belongs_to :sender, class_name: 'User', optional: true
   before_validation :ensure_correct_campaign_attributes
-  before_create :parse_audience
+  before_create :parse_contact_audience
+  after_create :parse_csv_audience
   attr_accessor :audience_type
 
   enum campaign_type: { ongoing: 0, one_off: 1, broadcast: 2 }
@@ -72,7 +80,7 @@ class Campaign < ApplicationRecord
   def validate_campaign_inbox
     return unless inbox
 
-    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms'].include? inbox.inbox_type
+    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms', 'Whatsapp'].include? inbox.inbox_type
   end
 
   # TO-DO we clean up with better validations when campaigns evolve into more inboxes
@@ -81,6 +89,9 @@ class Campaign < ApplicationRecord
 
     if ['Twilio SMS', 'Sms'].include?(inbox.inbox_type)
       self.campaign_type = 'one_off'
+      self.scheduled_at ||= Time.now.utc
+    elsif ['Whatsapp'].include?(inbox.inbox_type)
+      self.campaign_type = 'broadcast'
       self.scheduled_at ||= Time.now.utc
     else
       self.campaign_type = 'ongoing'
@@ -104,15 +115,25 @@ class Campaign < ApplicationRecord
     "NEW.display_id := nextval('camp_dpid_seq_' || NEW.account_id);"
   end
 
-  def parse_audience
-    return unless audience_type && audience_type == 'contacts'
-
-    time = Time.now.to_i
-    contact_ids = audience
-    contact_ids.each do |contact_id|
-      contact = Current.account.contacts.find(contact_id)
-      contact.add_labels([time.to_s])
+  def parse_contact_audience
+    # TODO: Resolve this
+    if audience_type == 'contacts'
+      time = Time.now.to_i
+      contact_ids = audience
+      contact_ids.each do |contact_id|
+        contact = Current.account.contacts.find(contact_id)
+        contact.add_labels([time.to_s])
+      end
+      self.audience = [time.to_s]
     end
-    self.audience = [time.to_s]
+  end
+
+  def parse_csv_audience
+    if audience_type == 'csv'
+      ActiveRecord::Base.transaction do
+        import = Current.account.data_imports.create!(data_type: 'contacts', campaign_id: id)
+        import.import_file.attach(ActiveStorage::Blob.find_by(key: audience[0]))
+      end
+    end
   end
 end
