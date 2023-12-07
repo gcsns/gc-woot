@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_27_191457) do
+ActiveRecord::Schema.define(version: 2023_12_04_123667) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -207,6 +207,13 @@ ActiveRecord::Schema.define(version: 2023_11_27_191457) do
     t.boolean "trigger_only_during_business_hours", default: false
     t.integer "sent_count"
     t.jsonb "template", default: {}
+    t.integer "audience_count", default: 0
+    t.integer "delivered_count", default: 0
+    t.integer "read_count", default: 0
+    t.integer "failed_count", default: 0
+    t.integer "replied_count", default: 0
+    t.integer "total_cost", default: 0
+    t.integer "enqueued_count", default: 0
     t.index ["account_id"], name: "index_campaigns_on_account_id"
     t.index ["campaign_status"], name: "index_campaigns_on_campaign_status"
     t.index ["campaign_type"], name: "index_campaigns_on_campaign_type"
@@ -528,6 +535,7 @@ ActiveRecord::Schema.define(version: 2023_11_27_191457) do
     t.integer "processed_records"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "campaign_id"
     t.index ["account_id"], name: "index_data_imports_on_account_id"
   end
 
@@ -916,6 +924,7 @@ ActiveRecord::Schema.define(version: 2023_11_27_191457) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "messages", "campaigns", on_delete: :cascade
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

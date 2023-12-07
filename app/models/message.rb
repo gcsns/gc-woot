@@ -31,6 +31,10 @@
 #  index_messages_on_sender_type_and_sender_id  (sender_type,sender_id)
 #  index_messages_on_source_id                  (source_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (campaign_id => campaigns.id) ON DELETE => cascade
+#
 
 class Message < ApplicationRecord
   include MessageFilterHelpers
@@ -64,7 +68,7 @@ class Message < ApplicationRecord
     integrations: 10,
     wb_interactive: 11
   }
-  enum status: { sent: 0, delivered: 1, read: 2, failed: 3 }
+  enum status: { sent: 0, delivered: 1, read: 2, failed: 3, enqueued: 4 }
   # [:submitted_email, :items, :submitted_values] : Used for bot message types
   # [:email] : Used by conversation_continuity incoming email messages
   # [:in_reply_to] : Used to reply to a particular tweet in threads

@@ -4,15 +4,22 @@
 #
 #  id                                 :bigint           not null, primary key
 #  audience                           :jsonb
+#  audience_count                     :integer          default(0)
 #  campaign_status                    :integer          default("active"), not null
 #  campaign_type                      :integer          default("ongoing"), not null
+#  delivered_count                    :integer          default(0)
 #  description                        :text
 #  enabled                            :boolean          default(TRUE)
+#  enqueued_count                     :integer          default(0)
+#  failed_count                       :integer          default(0)
 #  message                            :text             not null
+#  read_count                         :integer          default(0)
+#  replied_count                      :integer          default(0)
 #  scheduled_at                       :datetime
 #  sent_count                         :integer
 #  template                           :jsonb
 #  title                              :string           not null
+#  total_cost                         :integer          default(0)
 #  trigger_only_during_business_hours :boolean          default(FALSE)
 #  trigger_rules                      :jsonb
 #  created_at                         :datetime         not null
@@ -42,22 +49,26 @@ class Campaign < ApplicationRecord
   belongs_to :account
   belongs_to :inbox
   belongs_to :sender, class_name: 'User', optional: true
+  before_validation :ensure_correct_campaign_attributes
+  before_create :parse_contact_audience
+  after_create :parse_csv_audience
+  attr_accessor :audience_type
 
-  enum campaign_type: { ongoing: 0, one_off: 1 }
+  enum campaign_type: { ongoing: 0, one_off: 1, broadcast: 2 }
   # TODO : enabled attribute is unneccessary . lets move that to the campaign status with additional statuses like draft, disabled etc.
   enum campaign_status: { active: 0, completed: 1 }
 
   has_many :conversations, dependent: :nullify, autosave: true
 
-  before_validation :ensure_correct_campaign_attributes
   after_commit :set_display_id, unless: :display_id?
 
   def trigger!
-    return unless one_off?
+    return unless one_off? || broadcast?
     return if completed?
 
     Twilio::OneoffSmsCampaignService.new(campaign: self).perform if inbox.inbox_type == 'Twilio SMS'
     Sms::OneoffSmsCampaignService.new(campaign: self).perform if inbox.inbox_type == 'Sms'
+    Whatsapp::BroadcastMessageService.new(campaign: self).perform if inbox.inbox_type == 'Whatsapp'
   end
 
   private
@@ -69,7 +80,7 @@ class Campaign < ApplicationRecord
   def validate_campaign_inbox
     return unless inbox
 
-    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms'].include? inbox.inbox_type
+    errors.add :inbox, 'Unsupported Inbox type' unless ['Website', 'Twilio SMS', 'Sms', 'Whatsapp'].include? inbox.inbox_type
   end
 
   # TO-DO we clean up with better validations when campaigns evolve into more inboxes
@@ -78,6 +89,9 @@ class Campaign < ApplicationRecord
 
     if ['Twilio SMS', 'Sms'].include?(inbox.inbox_type)
       self.campaign_type = 'one_off'
+      self.scheduled_at ||= Time.now.utc
+    elsif ['Whatsapp'].include?(inbox.inbox_type)
+      self.campaign_type = 'broadcast'
       self.scheduled_at ||= Time.now.utc
     else
       self.campaign_type = 'ongoing'
@@ -99,5 +113,27 @@ class Campaign < ApplicationRecord
   # creating db triggers
   trigger.before(:insert).for_each(:row) do
     "NEW.display_id := nextval('camp_dpid_seq_' || NEW.account_id);"
+  end
+
+  def parse_contact_audience
+    # TODO: Resolve this
+    if audience_type == 'contacts'
+      time = Time.now.to_i
+      contact_ids = audience
+      contact_ids.each do |contact_id|
+        contact = Current.account.contacts.find(contact_id)
+        contact.add_labels([time.to_s])
+      end
+      self.audience = [time.to_s]
+    end
+  end
+
+  def parse_csv_audience
+    if audience_type == 'csv'
+      ActiveRecord::Base.transaction do
+        import = Current.account.data_imports.create!(data_type: 'contacts', campaign_id: id)
+        import.import_file.attach(ActiveStorage::Blob.find_by(key: audience[0]))
+      end
+    end
   end
 end

@@ -18,6 +18,13 @@ if resource.campaign_type == 'one_off'
 end
 json.trigger_rules resource.trigger_rules
 json.template resource.template
+json.audience_count resource.audience_count
+json.enqueued_count resource.enqueued_count
+json.sent_count resource.sent_count
+json.delivered_count resource.delivered_count
+json.read_count resource.read_count
+json.failed_count resource.failed_count
+json.replied_count resource.replied_count
 json.trigger_only_during_business_hours resource.trigger_only_during_business_hours
 json.created_at resource.created_at
 json.updated_at resource.updated_at
