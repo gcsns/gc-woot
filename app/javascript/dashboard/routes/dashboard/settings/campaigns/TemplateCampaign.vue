@@ -280,10 +280,12 @@ export default {
       let maxNumber = 0;
 
       // Iterate over matches in the text
-      const match = regex.exec(this.bodyContent);
-      if (Array.isArray(match) && match.length) {
+      let match;
+      while ((match = regex.exec(this.bodyContent)) !== null) {
         const numberInBraces = parseInt(match[1], 10);
-        maxNumber = Math.max(numberInBraces, maxNumber);
+        if (!isNaN(numberInBraces) && numberInBraces > maxNumber) {
+          maxNumber = numberInBraces;
+        }
       }
       this.n = maxNumber;
       if (this.n) {
