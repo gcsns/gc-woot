@@ -1,6 +1,7 @@
 import Index from './Index';
 import SettingsContent from '../Wrapper';
 import { frontendURL } from '../../../../helper/URLHelper';
+import BroadcastCampaign from './whatsapp-compaign/BroadcastCampaign.vue';
 
 export default {
   routes: [
@@ -55,6 +56,12 @@ export default {
           component: { ...Index },
         },
       ],
+    },
+    {
+      path: frontendURL('accounts/:accountId/campaigns/broadcast/:campaignId'),
+      name: 'campaign_single',
+      roles: ['administrator'],
+      component: BroadcastCampaign,
     },
   ],
 };
