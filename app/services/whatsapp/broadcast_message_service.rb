@@ -5,7 +5,11 @@ class Whatsapp::BroadcastMessageService
     raise "Invalid campaign #{campaign.id}" if campaign.inbox.inbox_type != 'Whatsapp' || !campaign.broadcast?
     raise 'Completed Campaign' if campaign.completed?
 
-    audience_label_ids = campaign.audience.pluck('id')
+    audience_label_ids = ActiveRecord::Base.connection.execute("
+      SELECT id
+      FROM tags
+      WHERE name IN (#{campaign.audience.map { |name| ActiveRecord::Base.connection.quote(name) }.join(', ')})
+    ").pluck('id')
     process_audience(audience_label_ids)
   end
 
@@ -44,11 +48,11 @@ class Whatsapp::BroadcastMessageService
     message_id = channel.send_template(to.phone_number, content)
     return if message_id.nil?
 
-    create_message(to.id, message_id, content)
+    create_message(to, message_id, content)
   end
 
-  def create_message(contact_id, message_id, content)
-    conversation_id = create_conversation(contact_id)
+  def create_message(contact, message_id, content)
+    conversation_id = create_conversation(contact)
     Message.create!(
       campaign_id: campaign.id,
       source_id: message_id,
@@ -63,14 +67,18 @@ class Whatsapp::BroadcastMessageService
     )
   end
 
-  def create_conversation(contact_id)
-    contact_inbox = ContactInbox.find_by(contact_id: contact_id, inbox_id: campaign.inbox_id)
+  def create_conversation(contact)
+    contact_inbox = ContactInbox.find_by(contact_id: contact.id, inbox_id: campaign.inbox_id)
+    if contact_inbox.nil?
+      contact_inbox = ContactInbox.create(contact_id: contact.id, inbox_id: campaign.inbox_id, source_id: contact.phone_number.sub(/^\+/, ''))
+    end
+
     conversation_created = Conversation.create!(
       account_id: campaign.account_id,
       inbox_id: campaign.inbox_id,
       updated_at: Time.current,
       created_at: Time.current,
-      contact_id: contact_id,
+      contact_id: contact.id,
       contact_inbox_id: contact_inbox.id
     )
     conversation_created.id

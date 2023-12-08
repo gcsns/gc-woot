@@ -35,8 +35,9 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
   def sync_templates
     gupshup_templates = fetch_whatsapp_templates("#{api_base_path_gup_shup}/template/list/#{whatsapp_channel.provider_config['app_name']}")
     templates = []
-    gupshup_templates.map do |template|
-      templates.push(convert_to_chatwoot_template(template))
+    gupshup_templates.each do |template|
+      cur_template = convert_to_chatwoot_template(template)
+      templates.push(cur_template) if cur_template && cur_template[:status] == 'APPROVED'
     end
 
     whatsapp_channel.update(message_templates: templates, message_templates_last_updated: Time.now.utc) if templates.present?

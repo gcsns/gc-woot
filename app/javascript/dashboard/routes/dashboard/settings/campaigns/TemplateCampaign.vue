@@ -13,9 +13,9 @@
               @change="onTemplateNameChange"
             >
               <option
+                v-for="(template, index) in templateOptions"
                 :key="index"
                 :value="template.name"
-                v-for="(template, index) in templateOptions"
               >
                 {{ template.name }}
               </option>
@@ -29,24 +29,23 @@
             <div v-if="hasParameters" class="vertical-input-container">
               <label for="parameters" class="input-label">Parameters</label>
               <div v-for="index in n" :key="index" class="vertical-input">
-              <div class="parameter-container">
-               <span>{{ index }}</span>
-                
-                <select
-                  v-model="selectedParameters[index]"
-                  class="consistent-size"
-                  @change="onSelectChange(index)"
-                >
-                  <option
-                    :value="option.keyName"
-                    v-for="option in customerKeys"
-                    :key="option.keyName"
+                <div class="parameter-container">
+                  <span>{{ index }}</span>
+
+                  <select
+                    v-model="selectedParameters[index]"
+                    class="consistent-size"
+                    @change="onSelectChange(index)"
                   >
-                    {{option.DisplayName}}
-                  </option>
-                </select>
-              </div>
-             
+                    <option
+                      v-for="option in customerKeys"
+                      :key="option.keyName"
+                      :value="option.keyName"
+                    >
+                      {{ option.DisplayName }}
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -71,12 +70,12 @@
       <!-- Right Column (Preview Campaign Component) -->
       <div class="form-section right-column">
         <preview-campaign
-          :headerFormat="headerFormat"
-          :bodyContent="bodyContent"
-          :headerContent="headerContent"
-          :footerContent="footerContent"
-          :ctaButton="ctaButton"
-          :quickReplyButton="quickReplyButton"
+          :header-format="headerFormat"
+          :body-content="bodyContent"
+          :header-content="headerContent"
+          :footer-content="footerContent"
+          :cta-button="ctaButton"
+          :quick-reply-button="quickReplyButton"
         />
       </div>
 
@@ -108,6 +107,11 @@ import { CAMPAIGNS_EVENTS } from '../../../../helper/AnalyticsHelper/events';
 import PreviewCampaign from './PreviewCampaign';
 
 export default {
+  components: {
+    PreviewCampaign,
+  },
+
+  mixins: [alertMixin, campaignMixin],
   props: {
     audienceType: String,
     audience: Array,
@@ -116,15 +120,7 @@ export default {
     selectedInboxId: Number,
     // Add other props as needed
   },
-  components: {
-    PreviewCampaign,
-  },
-
-  mixins: [alertMixin, campaignMixin],
   data() {
- 
-  
-  
     return {
       title: '',
       message: '',
@@ -152,7 +148,6 @@ export default {
       parameterOptions: [],
       selectedParameters: Array(this.n).fill(null),
       acceptableFiles: null,
-     
     };
   },
 
@@ -213,10 +208,10 @@ export default {
       uiFlags: 'campaigns/getUIFlags',
       audienceList: 'labels/getLabels',
       inboxes: 'inboxes/getInboxes',
-      customerKeys: 'contacts/getCustomerKeys'
+      customerKeys: 'contacts/getCustomerKeys',
     }),
     parameterArray() {
-      return this.selectedParameters.map((selectedParameter, index) => {
+      return this.selectedParameters.map(selectedParameter => {
         const keyName = `$${selectedParameter}$$fallback`; // Modify this based on your requirements
         return keyName;
       });
@@ -270,7 +265,7 @@ export default {
           component => component.type === 'HEADER'
         )?.format || '';
 
-        this.acceptableFiles = acceptableFileTypeDict[this.headerFormat]
+      this.acceptableFiles = acceptableFileTypeDict[this.headerFormat];
 
       const quickReplyButtons =
         selectedTemplate.components.find(
@@ -285,12 +280,10 @@ export default {
       let maxNumber = 0;
 
       // Iterate over matches in the text
-      let match;
-      while ((match = regex.exec(this.bodyContent)) !== null) {
+      const match = regex.exec(this.bodyContent);
+      if (Array.isArray(match) && match.length) {
         const numberInBraces = parseInt(match[1], 10);
-        if (!isNaN(numberInBraces) && numberInBraces > maxNumber) {
-          maxNumber = numberInBraces;
-        }
+        maxNumber = Math.max(numberInBraces, maxNumber);
       }
       this.n = maxNumber;
       if (this.n) {
@@ -302,9 +295,9 @@ export default {
         }
       }
     },
-    
-    async fetchOptionsFromApi(index) {
-    try {
+
+    async fetchOptionsFromApi() {
+      try {
         await this.$store.dispatch('contacts/fetchCustomerKeys');
       } catch (error) {
         const errorMessage =
@@ -312,9 +305,7 @@ export default {
         this.showAlert(errorMessage);
       }
     },
-    onSelectChange(index) {
-      const selectedParameter = this.selectedParameters[index];
-    },
+    onSelectChange() {},
     onClose() {
       this.$emit('on-close');
     },
@@ -363,21 +354,21 @@ export default {
     },
     getCampaignDetails() {
       let campaignDetails = null;
-      
-        const audience = this.selectedAudience.map(item => {
-          return {
-            id: item.id,
-            type: 'Label',
-          };
-        });
-        campaignDetails = {
-          title: this.title,
-          message: this.message,
-          inbox_id: this.selectedInbox,
-          scheduled_at: this.scheduledAt,
-          audience,
+
+      const audience = this.selectedAudience.map(item => {
+        return {
+          id: item.id,
+          type: 'Label',
         };
-      
+      });
+      campaignDetails = {
+        title: this.title,
+        message: this.message,
+        inbox_id: this.selectedInbox,
+        scheduled_at: this.scheduledAt,
+        audience,
+      };
+
       return campaignDetails;
     },
     async addCampaign() {
@@ -397,10 +388,17 @@ export default {
         const campaignDetails = {
           title: this.campaignName,
           message: 'Hello',
-          template: {template: selectedTemplate},
+          template: {
+            template: selectedTemplate,
+            ...(this.parameterArray.length && {
+              parameters: this.parameterArray.slice(1),
+            }),
+            ...(this.attachmentData && {
+              attachment_url: this.attachmentData.attachmentUrl,
+            }),
+          },
           audience_type: this.audienceType,
           audience: audienceInfo,
-          parameters: this.parameterArray.slice(1),
           sender_id: null,
           inbox_id: this.selectedInboxId,
         };
@@ -428,19 +426,16 @@ export default {
   height: 8rem;
 }
 
-
 .parameter-container {
   display: flex;
   justify-content: center;
   gap: 5px;
   align-items: center;
-
-  
 }
 
 .vertical-input {
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
   margin-bottom: 10px; /* Adjust the margin as needed */
 }
