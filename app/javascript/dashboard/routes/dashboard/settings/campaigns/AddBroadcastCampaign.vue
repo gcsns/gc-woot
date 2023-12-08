@@ -72,7 +72,8 @@
                 ref="file"
                 type="file"
                 accept="text/csv"
-                @change="handleFileUpload"
+                required
+                @change="uploadAttachment"
               />
             </label>
           </div>
@@ -157,6 +158,7 @@
         :campaignName="title"
         :scheduledTime="scheduledAt"
         :selectedInboxId="selectedInbox"
+        :csvAudience="csvAudience"
       />
     </div>
   </div>
@@ -348,6 +350,17 @@ export default {
       };
 
       return campaignDetails;
+    },
+    async uploadAttachment(event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('import_file', file, file.name);
+      const response =  await this.$store.dispatch(
+        'contacts/verifyContacts',
+        formData
+      );
+      this.csvAudience = [response.blob_key];
+     
     },
     async addCampaign() {
       this.$v.$touch();

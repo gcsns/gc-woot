@@ -35,8 +35,4 @@ run:
 docker: 
 	docker build -t $(APP_NAME) -f ./docker/Dockerfile .
 
-<<<<<<< Updated upstream
 .PHONY: setup db_create db_migrate db_seed db console server burn docker run
-=======
-.PHONY: setup db_create db_migrate db_seed db console server burn docker run
->>>>>>> Stashed changes

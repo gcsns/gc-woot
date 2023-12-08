@@ -279,7 +279,19 @@ export const actions = {
       commit(types.SET_CUSTOMER_KEYS, data);
     
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
+  },
+
+  verifyContacts: async (_, file)=> {
+    try {
+      const { data } = await ContactAPI.verifyContacts(file);
+      return data;
+    
+    } catch (error) {
+      throw new Error(error);
+    }
+
   }
+
 };

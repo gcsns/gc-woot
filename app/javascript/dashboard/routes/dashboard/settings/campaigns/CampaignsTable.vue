@@ -201,7 +201,7 @@ export default {
             title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.AUDIENCE'),
             align: this.isRTLView ? 'right' : 'left',
             renderBodyCell: ({ row }) => (
-              <div class="text-truncate">{row.audience}</div>
+              <div class="text-truncate">{row.audience_count}</div>
             ),
           },
           {
@@ -210,7 +210,7 @@ export default {
             title: this.$t('CAMPAIGN.BROADCAST.TABLE_HEADER.SUBMITTED'),
             align: this.isRTLView ? 'right' : 'left',
             renderBodyCell: ({ row }) => (
-              <div class="text-truncate">{row.campaign_type}</div>
+              <div class="text-truncate">{row.sent_count}</div>
             ),
           },
         ];

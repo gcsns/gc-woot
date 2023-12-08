@@ -1,5 +1,5 @@
 <template>
-  <div class="column content-box">
+  <div v-if="!campaignCreated" class="column content-box">
     <woot-modal-header :header-title="$t('CAMPAIGN.ADD.TITLE')" />
 
     <form class="row" @submit.prevent="addCampaign">
@@ -102,7 +102,6 @@ import { mapGetters } from 'vuex';
 import { required } from 'vuelidate/lib/validators';
 import alertMixin from 'shared/mixins/alertMixin';
 import campaignMixin from 'shared/mixins/campaignMixin';
-import { URLPattern } from 'urlpattern-polyfill';
 import { CAMPAIGNS_EVENTS } from '../../../../helper/AnalyticsHelper/events';
 import PreviewCampaign from './PreviewCampaign';
 
@@ -118,6 +117,7 @@ export default {
     campaignName: String,
     scheduledTime: Date,
     selectedInboxId: Number,
+    csvAudience: Array,
     // Add other props as needed
   },
   data() {
@@ -148,6 +148,8 @@ export default {
       parameterOptions: [],
       selectedParameters: Array(this.n).fill(null),
       acceptableFiles: null,
+      campaignCreated: false,
+     
     };
   },
 
@@ -163,37 +165,6 @@ export default {
         required,
       },
     };
-    if (this.isOngoingType) {
-      return {
-        ...commonValidations,
-        selectedSender: {
-          required,
-        },
-        endPoint: {
-          required,
-          shouldBeAValidURLPattern(value) {
-            try {
-              // eslint-disable-next-line
-              new URLPattern(value);
-              return true;
-            } catch (error) {
-              return false;
-            }
-          },
-          shouldStartWithHTTP(value) {
-            if (value) {
-              return (
-                value.startsWith('https://') || value.startsWith('http://')
-              );
-            }
-            return false;
-          },
-        },
-        timeOnPage: {
-          required,
-        },
-      };
-    }
     return {
       ...commonValidations,
       selectedAudience: {
@@ -280,10 +251,13 @@ export default {
       let maxNumber = 0;
 
       // Iterate over matches in the text
-      const match = regex.exec(this.bodyContent);
-      if (Array.isArray(match) && match.length) {
+      let match;
+      /* eslint-disable no-cond-assign */
+      while ((match = regex.exec(this.bodyContent)) !== null) {
         const numberInBraces = parseInt(match[1], 10);
-        maxNumber = Math.max(numberInBraces, maxNumber);
+        if (!Number.isNaN(numberInBraces) && numberInBraces > maxNumber) {
+          maxNumber = numberInBraces;
+        }
       }
       this.n = maxNumber;
       if (this.n) {
@@ -317,7 +291,7 @@ export default {
         'contacts/uploadAttachment',
         formData
       );
-      this.attachmentData = { attachmentUrl: url };
+      this.attachmentData = url;
     },
     onChange(value) {
       this.scheduledAt = value;
@@ -379,6 +353,8 @@ export default {
       } else if (this.audienceType === 'labels') {
         // For 'labels' audience type, use label titles
         audienceInfo = this.audience.map(label => label.title);
+      }else if (this.audienceType === 'csv'){
+        audienceInfo = this.csvAudience;
       }
       const selectedTemplate = this.templateOptions.find(
         template => template.name === this.selectedTemplateName
@@ -401,6 +377,7 @@ export default {
           audience: audienceInfo,
           sender_id: null,
           inbox_id: this.selectedInboxId,
+          attachment_url: this.attachmentData || ''
         };
 
         await this.$store.dispatch('campaigns/create', campaignDetails);
@@ -409,7 +386,7 @@ export default {
         this.$track(CAMPAIGNS_EVENTS.CREATE_CAMPAIGN, {
           type: this.campaignType,
         });
-
+        this.campaignCreated = true;
         this.showAlert(this.$t('CAMPAIGN.ADD.API.SUCCESS_MESSAGE'));
         this.onClose();
       } catch (error) {
