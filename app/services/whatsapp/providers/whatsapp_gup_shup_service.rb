@@ -184,7 +184,7 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
   end
 
   def process_response(response)
-    response_body = JSON.parse(response)
+    response_body = JSON.parse(response.body)
     if response.success?
       response_body['messageId']
     else
