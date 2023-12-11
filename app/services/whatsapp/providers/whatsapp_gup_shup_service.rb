@@ -184,8 +184,9 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
   end
 
   def process_response(response)
+    response_body = JSON.parse(response)
     if response.success?
-      response['messageId']
+      response_body['messageId']
     else
       Rails.logger.error response.body
       nil
