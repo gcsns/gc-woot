@@ -23,7 +23,7 @@ const campaigns = accountId => ({
     {
       key: 'broadcastCampaigns',
       label: 'BROADCAST',
-      icon: 'arrow-swap',
+      icon: 'speaker-1',
       hasSubMenu: false,
       toState: frontendURL(`accounts/${accountId}/campaigns/broadcast`),
       toStateName: 'broadcast_campaigns',

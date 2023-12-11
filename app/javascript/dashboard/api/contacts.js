@@ -83,6 +83,17 @@ class ContactAPI extends ApiClient {
       },
     });
   }
+
+  fetchCustomerKeys() {
+    return axios.get(`${this.baseUrl()}/customer_keys`);
+  }
+
+  verifyContacts(file){
+    return axios.post(`${this.baseUrl()}/bulk_contact/verify`, file,  {headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }
+  )};
 }
 
 export default new ContactAPI();

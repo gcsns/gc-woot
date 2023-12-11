@@ -29,11 +29,11 @@ class Api::V1::CampaignsController < ApplicationController
   private
 
   def fetch_messages(id, limit, offset, status)
-    messages = if status
-                 Message.where({ campaign_id: id, status: status }).limit(limit).offset(offset)
-               else
-                 Message.where(campaign_id: id).limit(limit).offset(offset)
-               end
+    if status
+      Message.where({ campaign_id: id, status: status }).limit(limit).offset(offset)
+    else
+      Message.where(campaign_id: id).limit(limit).offset(offset)
+    end
   end
 
   def get_formatted_messages(messages, campaign)
@@ -50,6 +50,6 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def get_contact_details(conversation_id)
-    contact = Contact.joins(conversations: :messages).find_by(messages: { conversation_id: conversation_id })
+    Contact.joins(conversations: :messages).find_by(messages: { conversation_id: conversation_id })
   end
 end

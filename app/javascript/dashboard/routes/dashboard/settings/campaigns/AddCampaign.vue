@@ -158,6 +158,33 @@
         </label>
       </div>
 
+      <label
+          v-if="isOnOffType"
+          class="multiselect-wrap--small"
+          :class="{ error: $v.selectedAudience.$error }"
+        >
+          <multiselect
+            v-model="selectedAudience"
+            :options="audienceList"
+            track-by="id"
+            label="title"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+            :hide-selected="true"
+            :placeholder="$t('CAMPAIGN.ADD.FORM.AUDIENCE.PLACEHOLDER')"
+            selected-label
+            :select-label="$t('FORMS.MULTISELECT.ENTER_TO_SELECT')"
+            :deselect-label="$t('FORMS.MULTISELECT.ENTER_TO_REMOVE')"
+            @blur="$v.selectedAudience.$touch"
+            @select="$v.selectedAudience.$touch"
+          />
+          <span v-if="$v.selectedAudience.$error" class="message">
+            {{ $t('CAMPAIGN.ADD.FORM.AUDIENCE.ERROR') }}
+          </span>
+        </label>
+
+
       <div class="modal-footer">
         <woot-button :is-loading="uiFlags.isCreating">
           {{ $t('CAMPAIGN.ADD.CREATE_BUTTON_TEXT') }}
@@ -367,4 +394,5 @@ export default {
 ::v-deep .ProseMirror-woot-style {
   height: 8rem;
 }
+
 </style>

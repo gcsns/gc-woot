@@ -16,7 +16,7 @@
 #  read_count                         :integer          default(0)
 #  replied_count                      :integer          default(0)
 #  scheduled_at                       :datetime
-#  sent_count                         :integer          default(0)
+#  sent_count                         :integer
 #  template                           :jsonb
 #  title                              :string           not null
 #  total_cost                         :integer          default(0)

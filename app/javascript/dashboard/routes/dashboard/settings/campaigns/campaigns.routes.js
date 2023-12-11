@@ -46,7 +46,7 @@ export default {
       component: SettingsContent,
       props: {
         headerTitle: 'CAMPAIGN.BROADCAST.HEADER',
-        icon: 'sound-source',
+        icon: 'speaker-1',
       },
       children: [
         {

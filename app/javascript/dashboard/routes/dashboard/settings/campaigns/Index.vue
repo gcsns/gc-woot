@@ -10,7 +10,9 @@
     </woot-button>
     <campaign />
     <woot-modal :show.sync="showAddPopup" :on-close="hideAddPopup">
-      <add-campaign @on-close="hideAddPopup" />
+     <add-broadcast-campaign v-if="isBroadcastType" @on-close="hideAddPopup"/>
+      <add-campaign v-else @on-close="hideAddPopup" />
+
     </woot-modal>
   </div>
 </template>
@@ -19,11 +21,13 @@
 import campaignMixin from 'shared/mixins/campaignMixin';
 import Campaign from './Campaign.vue';
 import AddCampaign from './AddCampaign';
+import AddBroadcastCampaign from './AddBroadcastCampaign.vue';
 
 export default {
   components: {
     Campaign,
     AddCampaign,
+    AddBroadcastCampaign,
   },
   mixins: [campaignMixin],
   data() {

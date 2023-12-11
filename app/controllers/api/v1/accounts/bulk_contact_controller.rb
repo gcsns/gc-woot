@@ -3,9 +3,16 @@ class Api::V1::Accounts::BulkContactController < Api::V1::Accounts::ContactsCont
   def verify
     render json: { error: I18n.t('errors.contacts.import.failed') }, status: :unprocessable_entity and return if params[:import_file].blank?
 
+    file_blob = ActiveStorage::Blob.create_and_upload!(
+      key: nil,
+      io: params[:import_file].tempfile,
+      filename: params[:import_file].original_filename,
+      content_type: params[:import_file].content_type
+    )
+
     rejected_contacts = parse_csv_and_build_contacts(params[:import_file])
     objects_array = rejected_contacts.map(&:to_h)
-    render json: { rejected_contacts: objects_array }, status: :ok
+    render json: { blob_key: file_blob.key, blob_id: file_blob.id, rejected_contacts: objects_array }, status: :ok
   end
 
   def parse_csv_and_build_contacts(import_file)

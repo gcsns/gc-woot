@@ -272,4 +272,26 @@ export const actions = {
   clearContactFilters({ commit }) {
     commit(types.CLEAR_CONTACT_FILTERS);
   },
+
+  fetchCustomerKeys: async ({commit}) => {
+    try {
+      const { data } = await ContactAPI.fetchCustomerKeys();
+      commit(types.SET_CUSTOMER_KEYS, data);
+    
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  verifyContacts: async (_, file)=> {
+    try {
+      const { data } = await ContactAPI.verifyContacts(file);
+      return data;
+    
+    } catch (error) {
+      throw new Error(error);
+    }
+
+  }
+
 };

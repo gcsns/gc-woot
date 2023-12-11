@@ -92,7 +92,15 @@ services:
     environment:
       - POSTGRES_DB=chatwoot
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+      - POSTGRES_PASSWORD=random123
+    
+  admin:
+    image: adminer
+    restart: always
+    depends_on: 
+      - postgres
+    ports:
+      - 8088:8080
 
   redis:
     image: redis:alpine
