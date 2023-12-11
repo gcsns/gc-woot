@@ -94,32 +94,61 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
       "#{api_base_path_gup_shup}/msg",
       headers: api_headers,
       body: URI.encode_www_form({
-                                  'message' => {
-                                    'content': {
-                                      'type': 'text',
-                                      'text': message['content_attributes']['body']['text']
-                                    },
-                                    'type': 'quick_reply',
-                                    'msgid': 'qr1',
-                                    'options': [{
-                                      'type': 'text',
-                                      'title': 'First'
-                                    }, {
-                                      'type': 'text',
-                                      'title': 'Second'
-                                    }, {
-                                      'type': 'text',
-                                      'title': 'Third'
-                                    }]
-                                  }.to_json,
+                                  'message' => get_parsed_interactive_message(message).to_json,
                                   'src.name' => whatsapp_channel.provider_config['app_name'],
                                   'destination' => phone_number,
                                   'source' => whatsapp_channel.provider_config['phone_number'],
                                   'channel' => 'whatsapp'
                                 })
     )
-
     process_response(response)
+  end
+
+  def get_parsed_interactive_message(message)
+    if message['content_attributes']['type'] == 'button'
+      get_parsed_interactive_button_message(message)
+    else
+      get_parsed_interactive_list_message(message)
+    end
+  end
+
+  def get_parsed_interactive_button_message(message)
+    {
+      'content': {
+        'type': 'text',
+        'text': message['content_attributes']['body']['text']
+      },
+      'type': 'quick_reply',
+      'msgid': 'qr1',
+      'options': message['content_attributes']['action']['buttons'].map { |btn| { 'type' => 'text', 'title' => btn['reply']['title'] } }
+    }
+  end
+
+  def get_parsed_interactive_list_message(message)
+    {
+      'type': 'list',
+      'body': message['content_attributes']['body']['text'],
+      'msgid': 'list1',
+      'globalButtons': [
+        {
+          'type' => 'text',
+          'title' => message['content_attributes']['action']['button']
+        }
+      ],
+      'items': message['content_attributes']['action']['sections'].map do |section|
+        {
+          'title' => section['title'],
+          'options' => section['rows'].map do |row|
+                         {
+                           'type' => 'text',
+                           'title' => row['title'],
+                           'postbackText' => row['growing'],
+                           'description' => row['description']
+                         }
+                       end
+        }
+      end
+    }
   end
 
   def send_attachment_message(phone_number, message)

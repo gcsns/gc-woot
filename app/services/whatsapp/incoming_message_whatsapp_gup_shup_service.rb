@@ -61,7 +61,7 @@ class Whatsapp::IncomingMessageWhatsappGupShupService < Whatsapp::IncomingMessag
   end
 
   def message_type
-    result = @processed_params.dig(:payload, :type) == 'contact' ? 'contacts' : @processed_params.dig(:payload, :type)
+    @processed_params.dig(:payload, :type) == 'contact' ? 'contacts' : @processed_params.dig(:payload, :type)
   end
 
   def create_messages
@@ -80,6 +80,8 @@ class Whatsapp::IncomingMessageWhatsappGupShupService < Whatsapp::IncomingMessag
   def message_content(message)
     # TODO: map interactive messages back to button messages in chatwoot
     message[:text] ||
+      message[:title] ||
+      message[:reply] ||
       message.dig(:button, :text) ||
       message.dig(:interactive, :button_reply, :title) ||
       message.dig(:interactive, :list_reply, :title) ||
@@ -103,5 +105,12 @@ class Whatsapp::IncomingMessageWhatsappGupShupService < Whatsapp::IncomingMessag
         content_type: attachment_file.content_type
       }
     )
+  end
+
+  def create_regular_message(message)
+    create_message(message)
+    attach_files if message[:reply].nil?
+    attach_location if message_type == 'location'
+    @message.save!
   end
 end
