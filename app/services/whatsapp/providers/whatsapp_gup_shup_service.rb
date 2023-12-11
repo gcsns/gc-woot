@@ -119,7 +119,7 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
         'text': message['content_attributes']['body']['text']
       },
       'type': 'quick_reply',
-      'msgid': 'qr1',
+      'msgid': "#{message.id}",
       'options': message['content_attributes']['action']['buttons'].map { |btn| { 'type' => 'text', 'title' => btn['reply']['title'] } }
     }
   end
@@ -128,7 +128,7 @@ class Whatsapp::Providers::WhatsappGupShupService < Whatsapp::Providers::BaseSer
     {
       'type': 'list',
       'body': message['content_attributes']['body']['text'],
-      'msgid': 'list1',
+      'msgid': "#{message.id}",
       'globalButtons': [
         {
           'type' => 'text',
