@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Puteți primi e-mailuri în domeniul dvs. personalizat acum."
       }
     },
-    "UPDATE_CHATWOOT": "Este disponibilă o actualizare %{latestChatwootVersion} pentru Shopkey 360. Vă rugăm să actualizați instanța.",
+    "UPDATE_CHATWOOT": "Este disponibilă o actualizare %{latestChatwootVersion} pentru WASP. Vă rugăm să actualizați instanța.",
     "LEARN_MORE": "Află mai mult"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Oferit de Shopkey 360"
+      "TEXT": "Oferit de WASP"
     },
     "BUTTON": {
       "REFRESH": "Reîmprospătare"

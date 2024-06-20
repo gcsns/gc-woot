@@ -1,6 +1,6 @@
 {
   "LOGIN": {
-    "TITLE": "Logga in till Shopkey 360",
+    "TITLE": "Logga in till WASP",
     "EMAIL": {
       "LABEL": "E-post",
       "PLACEHOLDER": "E-post t.ex.: someone@example.com"

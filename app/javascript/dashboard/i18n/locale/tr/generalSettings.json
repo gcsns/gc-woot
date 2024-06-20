@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Shopkey 360 ile bağlantı kesildi"
+      "TEXT": "WASP ile bağlantı kesildi"
     },
     "BUTTON": {
       "REFRESH": "Yenile"

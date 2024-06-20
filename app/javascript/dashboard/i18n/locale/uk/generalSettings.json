@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Тепер ви можете отримувати електронні листи на власний домен."
       }
     },
-    "UPDATE_CHATWOOT": "Доступне оновлення %{latestChatwootVersion} для Shopkey 360. Будь ласка, оновіть вашу копію.",
+    "UPDATE_CHATWOOT": "Доступне оновлення %{latestChatwootVersion} для WASP. Будь ласка, оновіть вашу копію.",
     "LEARN_MORE": "Детальніше"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Відключено від Shopkey 360"
+      "TEXT": "Відключено від WASP"
     },
     "BUTTON": {
       "REFRESH": "Оновити"

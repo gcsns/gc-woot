@@ -47,7 +47,7 @@
         "CUSTOM_EMAIL_DOMAIN_ENABLED": "Voit nyt vastaanottaa sähköposteja mukautetulla verkkotunnuksellasi."
       }
     },
-    "UPDATE_CHATWOOT": "An update %{latestChatwootVersion} for Shopkey 360 is available. Please update your instance.",
+    "UPDATE_CHATWOOT": "An update %{latestChatwootVersion} for WASP is available. Please update your instance.",
     "LEARN_MORE": "Learn more"
   },
   "FORMS": {
@@ -88,7 +88,7 @@
   },
   "NETWORK": {
     "NOTIFICATION": {
-      "TEXT": "Disconnected from Shopkey 360"
+      "TEXT": "Disconnected from WASP"
     },
     "BUTTON": {
       "REFRESH": "Refresh"
